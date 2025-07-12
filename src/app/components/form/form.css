@@ -1,0 +1,98 @@
+.form-comp {
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: white;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #00f5ff;
+  box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.form-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.form-input.error {
+  border-color: #ff1744;
+  box-shadow: 0 0 20px rgba(255, 23, 68, 0.3);
+}
+
+.error-bag {
+  color: #ff1744;
+  font-size: 12px;
+  margin-top: 5px;
+  padding-left: 5px;
+  display: block;
+  min-height: 16px;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  font-weight: 500;
+}
+
+.error-bag:empty {
+  display: none;
+}
+
+.button-group {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Botón personalizado para que se vea como el del register */
+.form-comp .secondary-button {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(45deg, #00f5ff, #ff00ff);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-comp .secondary-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 245, 255, 0.4);
+}
+
+.form-comp .secondary-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Efectos de focus para inputs */
+.form-group:focus-within {
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}

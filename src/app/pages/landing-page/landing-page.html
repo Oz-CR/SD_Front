@@ -3,14 +3,10 @@
     <header class="header">
       <div class="logo">SIMON.NEURAL</div>
       <nav class="nav">
-        <a href="#" class="nav-link">Inicio</a>
-        <a href="#" class="nav-link">Jugar</a>
-        <a href="#" class="nav-link">Ranking</a>
-        <a href="#" class="nav-link">Acerca</a>
       </nav>
       <div class="auth-buttons">
-        <a href="#" class="btn-login">Login</a>
-        <a href="#" class="btn-register">Registro</a>
+        <app-secondarybutton (click) = "goToLogin()">Inicio de Sesion</app-secondarybutton>
+        <app-secondarybutton (click) = "goToRegister()">Registro</app-secondarybutton>
       </div>
     </header>
 
@@ -28,7 +24,6 @@
           límites cognitivos.
         </p>
 
-        <a href="#" class="cta-button">INICIAR DESAFÍO</a>
       </div>
 
       <div class="right-content">
@@ -44,7 +39,6 @@
   </div>
 
   <script>
-    // Add interactive hover effects
     document.querySelectorAll(".simon-segment").forEach((segment) => {
       segment.addEventListener("mouseenter", function () {
         this.style.filter = "brightness(1.3) saturate(1.2)";
@@ -55,7 +49,6 @@
       });
     });
 
-    // Add click effects
     document.querySelectorAll(".simon-segment").forEach((segment) => {
       segment.addEventListener("click", function () {
         this.style.transform = "scale(1.1)";

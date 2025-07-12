@@ -19,43 +19,23 @@
         <h1 class="register-title">Iniciar sesion</h1>
         <p class="register-subtitle">Hola de nuevo</p>
 
-        <form id="registerForm">
-          <div class="form-group">
-            <label class="form-label" for="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              class="form-input"
-              placeholder="tu@email.com"
-              required
-            />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="password">Contraseña</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              class="form-input"
-              placeholder="••••••••"
-              required
-            />
-          </div>
-
-          <button type="submit" class="register-button">Log in</button>
-        </form>
+        <app-form
+          [fields]="loginFields"
+          [fieldErrors]="formErrors"
+          [clearErrorsOnInput]="true"
+          buttonText="Iniciar sesión"
+          (submitForm)="onLoginSubmit($event)"
+          (fieldChange)="clearFieldError($event)">
+        </app-form>
 
         <div class="form-footer">
-          ¿No tienes cuenta? <a href="#">Registarte aquí</a>
+          ¿No tienes cuenta? <a href="register">Regístrate aquí</a>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // Add focus effects to inputs
     document.querySelectorAll(".form-input").forEach((input) => {
       input.addEventListener("focus", function () {
         this.parentElement.style.transform = "translateY(-2px)";
@@ -66,7 +46,6 @@
       });
     });
 
-    // Mini Simon interactive effects
     document.querySelectorAll(".mini-segment").forEach((segment) => {
       segment.addEventListener("mouseenter", function () {
         this.style.filter = "brightness(1.3)";

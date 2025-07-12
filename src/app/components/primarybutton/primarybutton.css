@@ -1,0 +1,15 @@
+.primary-button {
+  padding: 12px 24px;
+  background: linear-gradient(45deg, #ff00ff, #00f5ff);
+  border: none;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.primary-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(255, 0, 255, 0.3);
+}

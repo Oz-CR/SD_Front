@@ -58,38 +58,6 @@ body {
   gap: 15px;
 }
 
-.btn-login {
-  padding: 12px 24px;
-  background: transparent;
-  border: 2px solid #00f5ff;
-  color: #00f5ff;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.btn-login:hover {
-  background: #00f5ff;
-  color: #000;
-}
-
-.btn-register {
-  padding: 12px 24px;
-  background: linear-gradient(45deg, #ff00ff, #00f5ff);
-  border: none;
-  color: white;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.btn-register:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(255, 0, 255, 0.3);
-}
-
 /* Main Content */
 .main-content {
   display: flex;

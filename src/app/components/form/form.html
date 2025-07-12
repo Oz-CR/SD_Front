@@ -1,0 +1,29 @@
+  <form class="form-comp" (ngSubmit)="onSubmit()">
+    <ng-container *ngFor="let field of fields">
+        <div class="form-group">
+            <label class="form-label" [for]="field.name">{{ field.label }}</label>
+            <input 
+                [type]="field.type"
+                [id]="field.name"
+                [placeholder]="field.placeholder"
+                [(ngModel)]="formData[field.name]"
+                [name]="field.name"
+                class="form-input"
+                [class.error]="hasError(field.name)"
+                (input)="onFieldInput(field.name)"
+                required
+                #ctrl="ngModel"
+            />
+
+            <div class="error-bag" *ngIf="hasError(field.name)">
+                {{ fieldErrors[field.name] }}
+            </div>
+        </div>
+    </ng-container>
+    <div class="button-group">
+      <app-secondarybutton type="submit">
+        {{ buttonText }}
+      </app-secondarybutton>
+    </div>
+
+  </form>

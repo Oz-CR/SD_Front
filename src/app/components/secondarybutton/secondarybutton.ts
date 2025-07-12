@@ -1,12 +1,12 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-primarybutton',
+  selector: 'app-secondarybutton',
   imports: [],
-  templateUrl: './primarybutton.html',
-  styleUrl: './primarybutton.css'
+  templateUrl: './secondarybutton.html',
+  styleUrl: './secondarybutton.css'
 })
-export class Primarybutton {
+export class Secondarybutton {
   @Input() disabled: boolean = false;
   @Input() type: 'button' | 'submit' | 'reset' = 'button';
 }
