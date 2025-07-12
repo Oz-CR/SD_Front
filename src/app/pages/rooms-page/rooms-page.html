@@ -1,0 +1,179 @@
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">Simon Says</div>
+      <nav class="nav">
+        <a href="#" class="nav-link">Inicio</a>
+        <a href="#" class="nav-link">Ranking</a>
+        <a href="#" class="nav-link">Perfil</a>
+        <a href="#" class="btn-back">Volver</a>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="page-title">
+        <div class="title-badge">Salas Activas</div>
+        <h1 class="main-title">Partidas Disponibles</h1>
+        <p class="subtitle">
+          Elige una sala y demuestra tu memoria en el desafío definitivo
+        </p>
+      </div>
+
+      <div class="partidas-grid">
+        <!-- Partida 1 -->
+        <div class="partida-card">
+          <div class="card-header">
+            <div>
+              <h3 class="partida-name">Partida de Juan</h3>
+              <p class="partida-host">Creada por <span>MemoryMaster</span></p>
+            </div>
+            <div class="status-indicator"></div>
+          </div>
+          <div class="card-stats">
+            <div class="stat-item">
+              <div class="stat-label">Colores</div>
+              <div class="stat-value">3</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Premio</div>
+              <div class="stat-value">150</div>
+            </div>
+          </div>
+          <button class="join-button">Unirse</button>
+        </div>
+
+        <!-- Partida 2 -->
+        <div class="partida-card">
+          <div class="card-header">
+            <div>
+              <h3 class="partida-name">Partida de María</h3>
+              <p class="partida-host">Creada por <span>QuickBrain</span></p>
+            </div>
+            <div class="status-indicator"></div>
+          </div>
+          <div class="card-stats">
+            <div class="stat-item">
+              <div class="stat-label">Colores</div>
+              <div class="stat-value">4</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Premio</div>
+              <div class="stat-value">500</div>
+            </div>
+          </div>
+          <button class="join-button">Unirse</button>
+        </div>
+
+        <!-- Partida 3 -->
+        <div class="partida-card">
+          <div class="card-header">
+            <div>
+              <h3 class="partida-name">Partida de Carlos</h3>
+              <p class="partida-host">Creada por <span>EliteMind</span></p>
+            </div>
+            <div class="status-indicator"></div>
+          </div>
+          <div class="card-stats">
+            <div class="stat-item">
+              <div class="stat-label">Colores</div>
+              <div class="stat-value">6</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Premio</div>
+              <div class="stat-value">1000</div>
+            </div>
+          </div>
+          <button class="join-button">Unirse</button>
+        </div>
+
+        <!-- Partida 4 -->
+        <div class="partida-card">
+          <div class="card-header">
+            <div>
+              <h3 class="partida-name">Partida de Ana</h3>
+              <p class="partida-host">Creada por <span>ChampionX</span></p>
+            </div>
+            <div class="status-indicator"></div>
+          </div>
+          <div class="card-stats">
+            <div class="stat-item">
+              <div class="stat-label">Colores</div>
+              <div class="stat-value">5</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Premio</div>
+              <div class="stat-value">2500</div>
+            </div>
+          </div>
+          <button class="join-button">Unirse</button>
+        </div>
+
+        <!-- Partida 5 -->
+        <div class="partida-card">
+          <div class="card-header">
+            <div>
+              <h3 class="partida-name">Partida de Luis</h3>
+              <p class="partida-host">Creada por <span>FunPlayer</span></p>
+            </div>
+            <div class="status-indicator"></div>
+          </div>
+          <div class="card-stats">
+            <div class="stat-item">
+              <div class="stat-label">Colores</div>
+              <div class="stat-value">2</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Premio</div>
+              <div class="stat-value">50</div>
+            </div>
+          </div>
+          <button class="join-button">Unirse</button>
+        </div>
+
+        <!-- Partida 6 -->
+        <div class="partida-card">
+          <div class="card-header">
+            <div>
+              <h3 class="partida-name">Partida de Pedro</h3>
+              <p class="partida-host">Creada por <span>MindBender</span></p>
+            </div>
+            <div class="status-indicator"></div>
+          </div>
+          <div class="card-stats">
+            <div class="stat-item">
+              <div class="stat-label">Colores</div>
+              <div class="stat-value">8</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Premio</div>
+              <div class="stat-value">5000</div>
+            </div>
+          </div>
+          <button class="join-button">Unirse</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Simon Decoration -->
+  <div class="simon-decoration">
+    <div class="simon-mini-segment mini-segment-1"></div>
+    <div class="simon-mini-segment mini-segment-2"></div>
+    <div class="simon-mini-segment mini-segment-3"></div>
+    <div class="simon-mini-segment mini-segment-4"></div>
+    <div class="simon-mini-center"></div>
+  </div>
+
+  <script>
+    const simonDecoration = document.querySelector(".simon-decoration");
+    simonDecoration.addEventListener("mouseenter", function () {
+      this.style.transform = "scale(1.1)";
+    });
+
+    simonDecoration.addEventListener("mouseleave", function () {
+      this.style.transform = "scale(1)";
+    });
+  </script>
+</body>
