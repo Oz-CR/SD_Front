@@ -1,0 +1,68 @@
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="logo">SIMON.NEURAL</div>
+      <nav class="nav">
+        <a href="#" class="nav-link">Inicio</a>
+        <a href="#" class="nav-link">Jugar</a>
+        <a href="#" class="nav-link">Ranking</a>
+        <a href="#" class="nav-link">Acerca</a>
+      </nav>
+      <div class="auth-buttons">
+        <a href="#" class="btn-login">Login</a>
+        <a href="#" class="btn-register">Registro</a>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="left-content">
+        <div class="challenge-badge">NEURAL MEMORY CHALLENGE</div>
+
+        <h1 class="main-title">SIMON DICE</h1>
+        <h2 class="subtitle">Desafía los límites de tu memoria neural</h2>
+
+        <p class="description">
+          Sumérgete en una experiencia de memoria futurista donde cada secuencia
+          es un desafío. Entrena tu cerebro con patrones complejos, efectos
+          visuales hipnóticos y una jugabilidad adictiva que pondrá a prueba tus
+          límites cognitivos.
+        </p>
+
+        <a href="#" class="cta-button">INICIAR DESAFÍO</a>
+      </div>
+
+      <div class="right-content">
+        <div class="simon-circle floating">
+          <div class="simon-segment segment-1"></div>
+          <div class="simon-segment segment-2"></div>
+          <div class="simon-segment segment-3"></div>
+          <div class="simon-segment segment-4"></div>
+          <div class="simon-center">DEMO</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Add interactive hover effects
+    document.querySelectorAll(".simon-segment").forEach((segment) => {
+      segment.addEventListener("mouseenter", function () {
+        this.style.filter = "brightness(1.3) saturate(1.2)";
+      });
+
+      segment.addEventListener("mouseleave", function () {
+        this.style.filter = "brightness(1) saturate(1)";
+      });
+    });
+
+    // Add click effects
+    document.querySelectorAll(".simon-segment").forEach((segment) => {
+      segment.addEventListener("click", function () {
+        this.style.transform = "scale(1.1)";
+        setTimeout(() => {
+          this.style.transform = "scale(1)";
+        }, 150);
+      });
+    });
+  </script>
+</body>

@@ -1,0 +1,80 @@
+<body>
+  <a href="#" class="back-link">Volver al inicio</a>
+
+  <div class="container">
+    <div class="logo-section">
+      <div class="logo">SIMON.NEURAL</div>
+      <div class="logo-subtitle">Desafía los límites de tu memoria neural</div>
+      <div class="mini-simon">
+        <div class="mini-segment mini-segment-1"></div>
+        <div class="mini-segment mini-segment-2"></div>
+        <div class="mini-segment mini-segment-3"></div>
+        <div class="mini-segment mini-segment-4"></div>
+        <div class="mini-center"></div>
+      </div>
+    </div>
+
+    <div class="register-section">
+      <div class="register-container">
+        <h1 class="register-title">Iniciar sesion</h1>
+        <p class="register-subtitle">Hola de nuevo</p>
+
+        <form id="registerForm">
+          <div class="form-group">
+            <label class="form-label" for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="form-input"
+              placeholder="tu@email.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="password">Contraseña</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="form-input"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+
+          <button type="submit" class="register-button">Log in</button>
+        </form>
+
+        <div class="form-footer">
+          ¿No tienes cuenta? <a href="#">Registarte aquí</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Add focus effects to inputs
+    document.querySelectorAll(".form-input").forEach((input) => {
+      input.addEventListener("focus", function () {
+        this.parentElement.style.transform = "translateY(-2px)";
+      });
+
+      input.addEventListener("blur", function () {
+        this.parentElement.style.transform = "translateY(0)";
+      });
+    });
+
+    // Mini Simon interactive effects
+    document.querySelectorAll(".mini-segment").forEach((segment) => {
+      segment.addEventListener("mouseenter", function () {
+        this.style.filter = "brightness(1.3)";
+      });
+
+      segment.addEventListener("mouseleave", function () {
+        this.style.filter = "brightness(1)";
+      });
+    });
+  </script>
+</body>
