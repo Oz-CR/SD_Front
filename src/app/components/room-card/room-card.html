@@ -1,0 +1,37 @@
+<div class="partida-card">
+  <div class="card-header">
+    <div>
+      <h3 class="partida-name">{{ room.name }}</h3>
+      <p class="partida-host">Creada por <span>{{ room.host }}</span></p>
+    </div>
+    <div class="status-indicator" [class.active]="room.isActive"></div>
+  </div>
+  
+  <div class="card-stats">
+    <div class="stat-item">
+      <div class="stat-label">Colores</div>
+      <div class="stat-value">{{ room.colorCount }}</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Jugadores</div>
+      <div class="stat-value">{{ room.currentPlayers }}/{{ room.maxPlayers }}</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Estado</div>
+      <div class="stat-value">{{ room.status }}</div>
+    </div>
+  </div>
+  
+  <div class="difficulty-badge">
+    <span class="difficulty-icon">{{ getDifficultyIcon() }}</span>
+    <span class="difficulty-text">{{ getDifficultyLabel() }}</span>
+  </div>
+  
+  <button 
+    class="join-button" 
+    [disabled]="!room.isActive || room.currentPlayers >= room.maxPlayers"
+    (click)="onJoinRoom()"
+  >
+    {{ getButtonText() }}
+  </button>
+</div>

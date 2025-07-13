@@ -12,8 +12,23 @@
         <p class="subtitle">
           Elige una sala y demuestra tu memoria en el desafío definitivo
         </p>
+        <div class="action-buttons">
+          <button class="create-room-btn" (click)="openCreateRoomModal()">
+            <span class="btn-icon">+</span>
+            Crear Nueva Partida
+          </button>
+          <button class="refresh-btn" (click)="refreshRooms()" [disabled]="isLoading">
+            <span class="refresh-icon">🔄</span>
+            Actualizar
+          </button>
+        </div>
+        <div class="polling-indicator" *ngIf="isPollingActive">
+          <span class="polling-dot"></span>
+          <span class="polling-text">Actualizando cada 5 segundos...</span>
+        </div>
       </div>
 
+<<<<<<< HEAD
       <div class="partidas-grid">
         <div class="partida-card">
           <div class="card-header">
@@ -139,7 +154,40 @@
             </div>
           </div>
           <button class="join-button">Unirse</button>
+=======
+      <!-- Mensaje de error -->
+      <div *ngIf="error" class="error-message">
+        <div class="error-icon">⚠️</div>
+        <p>{{ error }}</p>
+        <button class="btn-retry" (click)="loadRooms()">Intentar nuevamente</button>
+      </div>
+
+      <!-- Indicador de carga -->
+      <div *ngIf="isLoading" class="loading-indicator">
+        <div class="spinner"></div>
+        <p>Cargando partidas...</p>
+      </div>
+
+      <!-- Grid de partidas -->
+      <div class="partidas-grid" *ngIf="!isLoading && !error">
+        <!-- Mensaje cuando no hay partidas -->
+        <div *ngIf="rooms.length === 0" class="no-rooms-message">
+          <div class="empty-icon">🎮</div>
+          <h3>No hay partidas disponibles</h3>
+          <p>Sé el primero en crear una partida emocionante</p>
+          <button class="create-room-btn" (click)="openCreateRoomModal()">
+            <span class="btn-icon">+</span>
+            Crear Primera Partida
+          </button>
+>>>>>>> e53f5b41efeda8a39ec76a6b7856adc127d8bccd
         </div>
+        
+        <!-- Usar el componente room-card -->
+        <app-room-card 
+          *ngFor="let room of rooms; trackBy: trackByRoomId"
+          [room]="room"
+          (joinRoomEvent)="onJoinRoom($event)"
+        ></app-room-card>
       </div>
     </main>
   </div>
@@ -162,4 +210,11 @@
       this.style.transform = "scale(1)";
     });
   </script>
+  
+  <!-- Modal para crear nueva partida -->
+  <app-create-room-modal 
+    [isVisible]="isModalVisible"
+    (closeModalEvent)="closeModal()"
+    (createRoomEvent)="onCreateRoom($event)"
+  ></app-create-room-modal>
 </body>

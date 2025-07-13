@@ -1,0 +1,93 @@
+<!-- Modal Overlay -->
+<div class="modal-overlay" [class.active]="isVisible" (click)="closeModal()">
+  <!-- Modal Content -->
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <div class="modal-title">
+        <div class="title-badge">
+          <span class="badge-icon">🎮</span>
+          Nueva Partida
+        </div>
+        <h2>Crear Partida</h2>
+        <p class="modal-subtitle">Configura tu partida de Simon Says</p>
+      </div>
+      <button class="close-button" (click)="closeModal()">
+        <span>&times;</span>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <form class="create-room-form" (ngSubmit)="onSubmit()" #form="ngForm">
+        <!-- Campo Nombre de la Partida -->
+        <div class="form-group">
+          <label class="form-label" for="gameName">Nombre de la Partida</label>
+          <input 
+            type="text"
+            id="gameName"
+            name="gameName"
+            class="form-input"
+            placeholder="Ingresa el nombre de tu partida"
+            [(ngModel)]="roomData.gameName"
+            required
+            #gameNameInput="ngModel"
+            maxlength="30"
+          />
+          <div class="error-message" *ngIf="gameNameInput.invalid && gameNameInput.touched">
+            El nombre de la partida es requerido
+          </div>
+        </div>
+
+        <!-- Campo Cantidad de Colores -->
+        <div class="form-group">
+          <label class="form-label" for="colorCount">Cantidad de Colores</label>
+          <input 
+            type="number"
+            id="colorCount"
+            name="colorCount"
+            class="form-input"
+            placeholder="Cantidad de colores (2 - 6)"
+            [(ngModel)]="roomData.colorCount"
+            min="2"
+            max="6"
+            required
+            #colorCountInput="ngModel"
+          />
+          <div class="error-message" *ngIf="colorCountInput.touched && (roomData.colorCount < 2 || roomData.colorCount > 6)">
+            La cantidad de colores debe estar entre 2 y 6
+          </div>
+        </div>
+
+        <!-- Información de Dificultad -->
+        <div class="difficulty-info">
+          <div class="info-card">
+            <div class="info-icon">⚡</div>
+            <div class="info-content">
+              <h4>Dificultad: {{ getDifficultyLabel() }}</h4>
+              <p>{{ getDifficultyDescription() }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+          <button 
+            type="button" 
+            class="btn-secondary" 
+            (click)="closeModal()"
+          >
+            Cancelar
+          </button>
+          <button 
+            type="submit" 
+            class="btn-primary"
+            [disabled]="form.invalid"
+          >
+            Crear Partida
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -62,4 +62,41 @@ export class AuthService {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     return this.http.post<UserLoginResponse>(`${this.apiUrl}/login`, userData, { headers });
   }
+
+  /**
+   * Guarda el token y la información del usuario en localStorage
+   */
+  saveUserSession(response: UserLoginResponse | UserRegisterResponse): void {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('auth_token', response.data.token.value);
+      localStorage.setItem('user_info', JSON.stringify(response.data.user));
+    }
+  }
+
+  /**
+   * Elimina la sesión del usuario
+   */
+  clearUserSession(): void {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user_info');
+    }
+  }
+
+  /**
+   * Obtiene el token del localStorage
+   */
+  getToken(): string | null {
+    if (typeof localStorage !== 'undefined') {
+      return localStorage.getItem('auth_token');
+    }
+    return null;
+  }
+
+  /**
+   * Verifica si el usuario está autenticado
+   */
+  isAuthenticated(): boolean {
+    return this.getToken() !== null;
+  }
 }
