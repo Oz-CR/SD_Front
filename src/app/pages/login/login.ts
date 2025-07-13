@@ -35,9 +35,9 @@ export class Login {
     this.authService.login(formData).subscribe({
       next: (response) => {
         console.log('✅ Inicio de sesión exitoso:', response);
-        this.router.navigate(['/dashboard']);
         localStorage.setItem('token', response.data.token.value);
         alert(response.message || 'Inicio de sesión exitoso');
+        this.router.navigate(['/rooms']);
       },
       error: (error) => {
         console.error('❌ Error en el inicio de sesión:', error);

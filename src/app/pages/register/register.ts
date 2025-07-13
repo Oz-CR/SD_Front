@@ -41,9 +41,9 @@ export class Register {
     this.authService.register(formData).subscribe({
       next: (response) => {
         console.log('✅ Registro exitoso:', response);
-        this.router.navigate(['/login']);
         localStorage.setItem('token', response.data.token.value);
         alert(response.message || 'Registro exitoso');
+        this.router.navigate(['/rooms']);
       },
       error: (error) => {
         console.error('❌ Error en el registro:', error);
