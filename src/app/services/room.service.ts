@@ -36,7 +36,7 @@ export interface CreateRoomResponse {
   providedIn: 'root'
 })
 export class RoomService {
-  private apiUrl = 'http://localhost:3333';
+  private apiUrl = 'http://localhost:3333/api/partidas';
 
   constructor(
     private http: HttpClient,

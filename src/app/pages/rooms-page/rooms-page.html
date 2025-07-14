@@ -28,149 +28,18 @@
         </div>
       </div>
 
-<<<<<<< HEAD
-      <div class="partidas-grid">
-        <div class="partida-card">
-          <div class="card-header">
-            <div>
-              <h3 class="partida-name">Partida de Juan</h3>
-              <p class="partida-host">Creada por <span>MemoryMaster</span></p>
-            </div>
-            <div class="status-indicator"></div>
-          </div>
-          <div class="card-stats">
-            <div class="stat-item">
-              <div class="stat-label">Colores</div>
-              <div class="stat-value">3</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">Premio</div>
-              <div class="stat-value">150</div>
-            </div>
-          </div>
-          <button class="join-button">Unirse</button>
-        </div>
-
-        <div class="partida-card">
-          <div class="card-header">
-            <div>
-              <h3 class="partida-name">Partida de María</h3>
-              <p class="partida-host">Creada por <span>QuickBrain</span></p>
-            </div>
-            <div class="status-indicator"></div>
-          </div>
-          <div class="card-stats">
-            <div class="stat-item">
-              <div class="stat-label">Colores</div>
-              <div class="stat-value">4</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">Premio</div>
-              <div class="stat-value">500</div>
-            </div>
-          </div>
-          <button class="join-button">Unirse</button>
-        </div>
-
-        <div class="partida-card">
-          <div class="card-header">
-            <div>
-              <h3 class="partida-name">Partida de Carlos</h3>
-              <p class="partida-host">Creada por <span>EliteMind</span></p>
-            </div>
-            <div class="status-indicator"></div>
-          </div>
-          <div class="card-stats">
-            <div class="stat-item">
-              <div class="stat-label">Colores</div>
-              <div class="stat-value">6</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">Premio</div>
-              <div class="stat-value">1000</div>
-            </div>
-          </div>
-          <button class="join-button">Unirse</button>
-        </div>
-
-        <div class="partida-card">
-          <div class="card-header">
-            <div>
-              <h3 class="partida-name">Partida de Ana</h3>
-              <p class="partida-host">Creada por <span>ChampionX</span></p>
-            </div>
-            <div class="status-indicator"></div>
-          </div>
-          <div class="card-stats">
-            <div class="stat-item">
-              <div class="stat-label">Colores</div>
-              <div class="stat-value">5</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">Premio</div>
-              <div class="stat-value">2500</div>
-            </div>
-          </div>
-          <button class="join-button">Unirse</button>
-        </div>
-
-        <div class="partida-card">
-          <div class="card-header">
-            <div>
-              <h3 class="partida-name">Partida de Luis</h3>
-              <p class="partida-host">Creada por <span>FunPlayer</span></p>
-            </div>
-            <div class="status-indicator"></div>
-          </div>
-          <div class="card-stats">
-            <div class="stat-item">
-              <div class="stat-label">Colores</div>
-              <div class="stat-value">2</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">Premio</div>
-              <div class="stat-value">50</div>
-            </div>
-          </div>
-          <button class="join-button">Unirse</button>
-        </div>
-
-        <div class="partida-card">
-          <div class="card-header">
-            <div>
-              <h3 class="partida-name">Partida de Pedro</h3>
-              <p class="partida-host">Creada por <span>MindBender</span></p>
-            </div>
-            <div class="status-indicator"></div>
-          </div>
-          <div class="card-stats">
-            <div class="stat-item">
-              <div class="stat-label">Colores</div>
-              <div class="stat-value">8</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">Premio</div>
-              <div class="stat-value">5000</div>
-            </div>
-          </div>
-          <button class="join-button">Unirse</button>
-=======
-      <!-- Mensaje de error -->
       <div *ngIf="error" class="error-message">
         <div class="error-icon">⚠️</div>
         <p>{{ error }}</p>
         <button class="btn-retry" (click)="loadRooms()">Intentar nuevamente</button>
       </div>
 
-      <!-- Indicador de carga -->
       <div *ngIf="isLoading" class="loading-indicator">
         <div class="spinner"></div>
         <p>Cargando partidas...</p>
       </div>
 
-      <!-- Grid de partidas -->
       <div class="partidas-grid" *ngIf="!isLoading && !error">
-        <!-- Mensaje cuando no hay partidas -->
         <div *ngIf="rooms.length === 0" class="no-rooms-message">
           <div class="empty-icon">🎮</div>
           <h3>No hay partidas disponibles</h3>
@@ -179,10 +48,8 @@
             <span class="btn-icon">+</span>
             Crear Primera Partida
           </button>
->>>>>>> e53f5b41efeda8a39ec76a6b7856adc127d8bccd
         </div>
         
-        <!-- Usar el componente room-card -->
         <app-room-card 
           *ngFor="let room of rooms; trackBy: trackByRoomId"
           [room]="room"
@@ -211,7 +78,6 @@
     });
   </script>
   
-  <!-- Modal para crear nueva partida -->
   <app-create-room-modal 
     [isVisible]="isModalVisible"
     (closeModalEvent)="closeModal()"
