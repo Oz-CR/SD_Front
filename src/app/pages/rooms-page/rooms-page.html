@@ -1,17 +1,9 @@
 <body>
   <div class="container">
-    <!-- Header -->
     <header class="header">
       <div class="logo">Simon Says</div>
-      <nav class="nav">
-        <a href="#" class="nav-link">Inicio</a>
-        <a href="#" class="nav-link">Ranking</a>
-        <a href="#" class="nav-link">Perfil</a>
-        <a href="#" class="btn-back">Volver</a>
-      </nav>
     </header>
 
-    <!-- Main Content -->
     <main class="main-content">
       <div class="page-title">
         <div class="title-badge">Salas Activas</div>
@@ -39,89 +31,131 @@
         </div>
       </div>
 
-      <!-- Mensaje de error -->
-      <div *ngIf="error" class="error-message">
-        <div class="error-icon">⚠️</div>
-        <p>{{ error }}</p>
-        <button class="btn-retry" (click)="loadRooms()">
-          Intentar nuevamente
-        </button>
-      </div>
-
-      <!-- Landing de espera - Cuando el jugador está esperando al segundo jugador -->
-      <!-- Debug: isWaitingForPlayer={{isWaitingForPlayer}}, waitingRoom={{!!waitingRoom}} -->
-      <div *ngIf="isWaitingForPlayer && waitingRoom" class="waiting-landing">
-        <div class="waiting-container">
-          <div class="waiting-animation">
-            <div class="pulsing-circle"></div>
-            <div class="waiting-icon">⏳</div>
-          </div>
-
-          <div class="waiting-content">
-            <h2 class="waiting-title">Esperando al segundo jugador...</h2>
-            <p class="waiting-subtitle">
-              Tu partida "{{ waitingRoom.name }}" está lista
-            </p>
-
-            <div class="game-info">
-              <div class="info-item">
-                <span class="info-label">Dificultad:</span>
-                <span class="info-value"
-                  >{{ waitingRoom.colorCount }} colores</span
-                >
-              </div>
-              <div class="info-item">
-                <span class="info-label">Jugadores:</span>
-                <span class="info-value"
-                  >{{ waitingRoom.currentPlayers }}/{{ waitingRoom.maxPlayers
-                  }}</span
-                >
-              </div>
-              <div class="info-item">
-                <span class="info-label">Anfitrión:</span>
-                <span class="info-value">{{ waitingRoom.host }}</span>
-              </div>
+      <div class="partidas-grid">
+        <div class="partida-card">
+          <div class="card-header">
+            <div>
+              <h3 class="partida-name">Partida de Juan</h3>
+              <p class="partida-host">Creada por <span>MemoryMaster</span></p>
             </div>
-
-            <div class="waiting-actions">
-              <button class="btn-cancel" (click)="cancelWaitingRoom()">
-                Cancelar Partida
-              </button>
-              <button class="btn-refresh" (click)="loadRooms()">
-                <span class="refresh-icon">🔄</span>
-                Actualizar
-              </button>
+            <div class="status-indicator"></div>
+          </div>
+          <div class="card-stats">
+            <div class="stat-item">
+              <div class="stat-label">Colores</div>
+              <div class="stat-value">3</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Premio</div>
+              <div class="stat-value">150</div>
             </div>
           </div>
+          <button class="join-button">Unirse</button>
         </div>
 
-        <div class="waiting-background">
-          <div class="floating-shapes">
-            <div class="shape shape-1"></div>
-            <div class="shape shape-2"></div>
-            <div class="shape shape-3"></div>
-            <div class="shape shape-4"></div>
+        <div class="partida-card">
+          <div class="card-header">
+            <div>
+              <h3 class="partida-name">Partida de María</h3>
+              <p class="partida-host">Creada por <span>QuickBrain</span></p>
+            </div>
+            <div class="status-indicator"></div>
           </div>
+          <div class="card-stats">
+            <div class="stat-item">
+              <div class="stat-label">Colores</div>
+              <div class="stat-value">4</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Premio</div>
+              <div class="stat-value">500</div>
+            </div>
+          </div>
+          <button class="join-button">Unirse</button>
         </div>
-      </div>
 
-      <!-- Indicador de carga -->
-      <div *ngIf="isLoading" class="loading-indicator">
-        <div class="spinner"></div>
-        <p>Cargando partidas...</p>
-      </div>
+        <div class="partida-card">
+          <div class="card-header">
+            <div>
+              <h3 class="partida-name">Partida de Carlos</h3>
+              <p class="partida-host">Creada por <span>EliteMind</span></p>
+            </div>
+            <div class="status-indicator"></div>
+          </div>
+          <div class="card-stats">
+            <div class="stat-item">
+              <div class="stat-label">Colores</div>
+              <div class="stat-value">6</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Premio</div>
+              <div class="stat-value">1000</div>
+            </div>
+          </div>
+          <button class="join-button">Unirse</button>
+        </div>
 
-      <!-- Grid de partidas -->
-      <div class="partidas-grid" *ngIf="!isLoading && !error">
-        <!-- Mensaje cuando no hay partidas -->
-        <div *ngIf="rooms.length === 0" class="no-rooms-message">
-          <div class="empty-icon">🎮</div>
-          <h3>No hay partidas disponibles</h3>
-          <p>Sé el primero en crear una partida emocionante</p>
-          <button class="create-room-btn" (click)="openCreateRoomModal()">
-            <span class="btn-icon">+</span>
-            Crear Primera Partida
-          </button>
+        <div class="partida-card">
+          <div class="card-header">
+            <div>
+              <h3 class="partida-name">Partida de Ana</h3>
+              <p class="partida-host">Creada por <span>ChampionX</span></p>
+            </div>
+            <div class="status-indicator"></div>
+          </div>
+          <div class="card-stats">
+            <div class="stat-item">
+              <div class="stat-label">Colores</div>
+              <div class="stat-value">5</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Premio</div>
+              <div class="stat-value">2500</div>
+            </div>
+          </div>
+          <button class="join-button">Unirse</button>
+        </div>
+
+        <div class="partida-card">
+          <div class="card-header">
+            <div>
+              <h3 class="partida-name">Partida de Luis</h3>
+              <p class="partida-host">Creada por <span>FunPlayer</span></p>
+            </div>
+            <div class="status-indicator"></div>
+          </div>
+          <div class="card-stats">
+            <div class="stat-item">
+              <div class="stat-label">Colores</div>
+              <div class="stat-value">2</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Premio</div>
+              <div class="stat-value">50</div>
+            </div>
+          </div>
+          <button class="join-button">Unirse</button>
+        </div>
+
+        <div class="partida-card">
+          <div class="card-header">
+            <div>
+              <h3 class="partida-name">Partida de Pedro</h3>
+              <p class="partida-host">Creada por <span>MindBender</span></p>
+            </div>
+            <div class="status-indicator"></div>
+          </div>
+          <div class="card-stats">
+            <div class="stat-item">
+              <div class="stat-label">Colores</div>
+              <div class="stat-value">8</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Premio</div>
+              <div class="stat-value">5000</div>
+            </div>
+          </div>
+          <button class="join-button">Unirse</button>
         </div>
 
         <!-- Usar el componente room-card -->
@@ -135,7 +169,6 @@
     </main>
   </div>
 
-  <!-- Simon Decoration -->
   <div class="simon-decoration">
     <div class="simon-mini-segment mini-segment-1"></div>
     <div class="simon-mini-segment mini-segment-2"></div>

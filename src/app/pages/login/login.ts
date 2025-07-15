@@ -35,8 +35,11 @@ export class Login {
     this.authService.login(formData).subscribe({
       next: (response) => {
         console.log('✅ Inicio de sesión exitoso:', response);
+<<<<<<< HEAD
         
         // Guardar token y información del usuario
+=======
+>>>>>>> 0ab13b052dc8649928e9aa684e900f0f454b43bc
         localStorage.setItem('token', response.data.token.value);
         localStorage.setItem('current_user', JSON.stringify(response.data.user));
         
