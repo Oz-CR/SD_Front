@@ -77,8 +77,8 @@ export class AuthService {
    */
   saveUserSession(response: UserLoginResponse | UserRegisterResponse): void {
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('auth_token', response.data.token.value);
-      localStorage.setItem('user_info', JSON.stringify(response.data.user));
+      localStorage.setItem('token', response.data.token.value);
+      localStorage.setItem('current_user', JSON.stringify(response.data.user));
     }
   }
 
@@ -87,8 +87,8 @@ export class AuthService {
    */
   clearUserSession(): void {
     if (typeof localStorage !== 'undefined') {
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('user_info');
+      localStorage.removeItem('token');
+      localStorage.removeItem('current_user');
     }
   }
 
@@ -97,7 +97,7 @@ export class AuthService {
    */
   getToken(): string | null {
     if (typeof localStorage !== 'undefined') {
-      return localStorage.getItem('auth_token');
+      return localStorage.getItem('token');
     }
     return null;
   }
@@ -106,6 +106,64 @@ export class AuthService {
    * Verifica si el usuario está autenticado
    */
   isAuthenticated(): boolean {
-    return this.getToken() !== null;
+    const token = this.getToken();
+    return token !== null && this.isTokenValid(token);
+  }
+
+  /**
+   * Verifica si el token tiene una estructura válida
+   */
+  isTokenValid(token: string): boolean {
+    if (!token) return false;
+    
+    try {
+      // Si el token es un access token de AdonisJS (formato: oat_N.token)
+      if (token.startsWith('oat_')) {
+        // Para access tokens, verificar formato básico
+        const parts = token.split('.');
+        if (parts.length !== 2) return false;
+        
+        // Verificar que las partes no estén vacías
+        if (!parts[0] || !parts[1]) return false;
+        
+        return true;
+      }
+      
+      // Si es un JWT, verificar estructura JWT
+      const parts = token.split('.');
+      if (parts.length !== 3) return false;
+      
+      // Intentar decodificar el payload
+      const payload = JSON.parse(atob(parts[1]));
+      
+      // Verificar que el token no haya expirado
+      if (payload.exp && Date.now() >= payload.exp * 1000) {
+        console.log('🚫 Token expirado');
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error al validar token:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Obtiene la información del usuario desde localStorage
+   */
+  getUserInfo(): any {
+    if (typeof localStorage !== 'undefined') {
+      const userInfo = localStorage.getItem('current_user');
+      if (userInfo) {
+        try {
+          return JSON.parse(userInfo);
+        } catch (error) {
+          console.error('Error al parsear información del usuario:', error);
+          return null;
+        }
+      }
+    }
+    return null;
   }
 }

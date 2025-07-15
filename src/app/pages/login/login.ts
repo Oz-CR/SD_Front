@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Form } from '../../components/form/form';
 import { AuthService } from '../../services/auth.service';
+import { TokenMonitorService } from '../../services/token-monitor.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -27,7 +28,11 @@ export class Login {
 
   formErrors: { [key: string]: string } = {};
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService, 
+    private router: Router,
+    private tokenMonitorService: TokenMonitorService
+  ) {}
 
   onLoginSubmit(formData: any) {
     console.log('📝 Datos del formulario de inicio de sesión:', formData);
@@ -45,6 +50,9 @@ export class Login {
           token: response.data.token.value,
           user: response.data.user,
         });
+
+        // Iniciar monitoreo del token
+        this.tokenMonitorService.startMonitoring();
 
         alert(response.message || 'Inicio de sesión exitoso');
         this.router.navigate(['/rooms']);

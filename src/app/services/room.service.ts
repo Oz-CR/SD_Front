@@ -103,7 +103,7 @@ export class RoomService {
    */
   getCurrentUserId(): number | null {
     if (isPlatformBrowser(this.platformId)) {
-      const token = localStorage.getItem('auth_token');
+      const token = localStorage.getItem('token');
       if (token) {
         try {
           const payload = JSON.parse(atob(token.split('.')[1]));
