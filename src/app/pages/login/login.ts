@@ -7,22 +7,22 @@ import { Router } from '@angular/router';
   selector: 'app-login',
   imports: [Form],
   templateUrl: './login.html',
-  styleUrl: './login.css'
+  styleUrl: './login.css',
 })
 export class Login {
   loginFields = [
-    { 
-      name: 'email', 
-      type: 'email', 
-      placeholder: 'ejemplo@email.com', 
-      label: 'Email' 
+    {
+      name: 'email',
+      type: 'email',
+      placeholder: 'ejemplo@email.com',
+      label: 'Email',
     },
-    { 
-      name: 'password', 
-      type: 'password', 
-      placeholder: '••••••••', 
-      label: 'Contraseña' 
-    }
+    {
+      name: 'password',
+      type: 'password',
+      placeholder: '••••••••',
+      label: 'Contraseña',
+    },
   ];
 
   formErrors: { [key: string]: string } = {};
@@ -35,34 +35,32 @@ export class Login {
     this.authService.login(formData).subscribe({
       next: (response) => {
         console.log('✅ Inicio de sesión exitoso:', response);
-<<<<<<< HEAD
-        
-        // Guardar token y información del usuario
-=======
->>>>>>> 0ab13b052dc8649928e9aa684e900f0f454b43bc
         localStorage.setItem('token', response.data.token.value);
-        localStorage.setItem('current_user', JSON.stringify(response.data.user));
-        
+        localStorage.setItem(
+          'current_user',
+          JSON.stringify(response.data.user)
+        );
+
         console.log('💾 Datos guardados en localStorage:', {
           token: response.data.token.value,
-          user: response.data.user
+          user: response.data.user,
         });
-        
+
         alert(response.message || 'Inicio de sesión exitoso');
         this.router.navigate(['/rooms']);
       },
       error: (error) => {
         console.error('❌ Error en el inicio de sesión:', error);
         console.log('🔍 Error completo:', error.error);
-        
+
         // Limpiar errores previos
         this.formErrors = {};
-        
+
         if (error.error) {
           // Manejar errores de validación del backend
           if (error.error.errors) {
             console.log('📋 Errores del backend:', error.error.errors);
-            
+
             // Si es un array de errores
             if (Array.isArray(error.error.errors)) {
               error.error.errors.forEach((err: any) => {
@@ -73,24 +71,27 @@ export class Login {
                   this.formErrors[err.field] = err.message;
                 }
               });
-            } 
+            }
             // Si es un objeto de errores
             else if (typeof error.error.errors === 'object') {
               this.formErrors = { ...error.error.errors };
             }
-          } 
-          
+          }
+
           // Si no hay errores específicos de campos, mostrar mensaje general
-          if (Object.keys(this.formErrors).length === 0 && error.error.message) {
+          if (
+            Object.keys(this.formErrors).length === 0 &&
+            error.error.message
+          ) {
             console.log('⚠️ Mensaje del backend:', error.error.message);
             alert(error.error.message);
           }
-          
+
           console.log('🔍 Errores mapeados:', this.formErrors);
         } else {
           alert('Error al iniciar sesión. Inténtalo de nuevo.');
         }
-      }
+      },
     });
   }
 

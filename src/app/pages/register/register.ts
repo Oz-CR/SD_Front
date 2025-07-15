@@ -7,28 +7,28 @@ import { Router } from '@angular/router';
   selector: 'app-register',
   imports: [Form],
   templateUrl: './register.html',
-  styleUrl: './register.css'
+  styleUrl: './register.css',
 })
 export class Register {
   registerFields = [
-    { 
-      name: 'fullName', 
-      type: 'text', 
-      placeholder: 'Ingresa tu nombre completo', 
-      label: 'Nombre Completo' 
+    {
+      name: 'fullName',
+      type: 'text',
+      placeholder: 'Ingresa tu nombre completo',
+      label: 'Nombre Completo',
     },
-    { 
-      name: 'email', 
-      type: 'email', 
-      placeholder: 'ejemplo@email.com', 
-      label: 'Email' 
+    {
+      name: 'email',
+      type: 'email',
+      placeholder: 'ejemplo@email.com',
+      label: 'Email',
     },
-    { 
-      name: 'password', 
-      type: 'password', 
-      placeholder: '••••••••', 
-      label: 'Contraseña' 
-    }
+    {
+      name: 'password',
+      type: 'password',
+      placeholder: '••••••••',
+      label: 'Contraseña',
+    },
   ];
 
   formErrors: { [key: string]: string } = {};
@@ -37,42 +37,36 @@ export class Register {
 
   onRegisterSubmit(formData: any) {
     console.log('📝 Datos del formulario de registro:', formData);
-    
+
     this.authService.register(formData).subscribe({
       next: (response) => {
         console.log('✅ Registro exitoso:', response);
-<<<<<<< HEAD
-        
-        // Guardar token y información del usuario
-=======
->>>>>>> 0ab13b052dc8649928e9aa684e900f0f454b43bc
         localStorage.setItem('token', response.data.token.value);
-        localStorage.setItem('current_user', JSON.stringify(response.data.user));
-        
+        localStorage.setItem(
+          'current_user',
+          JSON.stringify(response.data.user)
+        );
+
         console.log('💾 Datos guardados en localStorage:', {
           token: response.data.token.value,
-          user: response.data.user
+          user: response.data.user,
         });
-        
+
         alert(response.message || 'Registro exitoso');
-<<<<<<< HEAD
-        // Ir directamente a rooms si ya tiene datos guardados
-=======
->>>>>>> 0ab13b052dc8649928e9aa684e900f0f454b43bc
         this.router.navigate(['/rooms']);
       },
       error: (error) => {
         console.error('❌ Error en el registro:', error);
         console.log('🔍 Error completo:', error.error);
-        
+
         // Limpiar errores previos
         this.formErrors = {};
-        
+
         if (error.error) {
-          // Manejar errores de validación del backend
+          // Manejar errores de validación del backendñ
           if (error.error.errors) {
             console.log('📋 Errores del backend:', error.error.errors);
-            
+
             // Si es un array de errores
             if (Array.isArray(error.error.errors)) {
               error.error.errors.forEach((err: any) => {
@@ -83,25 +77,28 @@ export class Register {
                   this.formErrors[err.field] = err.message;
                 }
               });
-            } 
+            }
             // Si es un objeto de errores
             else if (typeof error.error.errors === 'object') {
               this.formErrors = { ...error.error.errors };
             }
-          } 
-          
+          }
+
           // Si no hay errores específicos de campos, mostrar mensaje general
-          if (Object.keys(this.formErrors).length === 0 && error.error.message) {
+          if (
+            Object.keys(this.formErrors).length === 0 &&
+            error.error.message
+          ) {
             console.log('⚠️ Mensaje del backend:', error.error.message);
             alert(error.error.message);
           }
-          
+
           console.log('🔍 Errores mapeados:', this.formErrors);
         } else {
           alert('Error al registrar. Inténtalo de nuevo.');
         }
-      }
-    })
+      },
+    });
   }
 
   clearFieldError(fieldName: string) {
