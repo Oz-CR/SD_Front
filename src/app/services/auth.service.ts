@@ -49,7 +49,7 @@ export interface UserLoginData {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3333/api/auth';
+  private apiUrl = 'https://b6acfc70646a.ngrok-free.app/api/auth';
 
   constructor(
     private http: HttpClient,
@@ -57,7 +57,10 @@ export class AuthService {
   ) {}
 
   register(userData: UserRegisterData): Observable<UserRegisterResponse> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const headers = new HttpHeaders({ 
+      'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true'
+    });
     return this.http.post<UserRegisterResponse>(
       `${this.apiUrl}/register`,
       userData,
@@ -66,7 +69,10 @@ export class AuthService {
   }
 
   login(userData: UserLoginData): Observable<UserLoginResponse> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const headers = new HttpHeaders({ 
+      'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true'
+    });
     return this.http.post<UserLoginResponse>(`${this.apiUrl}/login`, userData, {
       headers,
     });

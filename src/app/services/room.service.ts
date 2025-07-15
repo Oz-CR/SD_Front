@@ -41,7 +41,7 @@ export interface JoinRoomResponse {
   providedIn: 'root',
 })
 export class RoomService {
-  private apiUrl = 'http://localhost:3333';
+  private apiUrl = 'https://b6acfc70646a.ngrok-free.app';
 
   constructor(
     private http: HttpClient,
@@ -86,7 +86,10 @@ export class RoomService {
    * Obtiene los headers con el token de autenticación
    */
   private getHeaders(): HttpHeaders {
-    let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    let headers = new HttpHeaders({ 
+      'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true'
+    });
 
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('token');
