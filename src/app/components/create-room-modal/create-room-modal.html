@@ -23,7 +23,7 @@
         <!-- Campo Nombre de la Partida -->
         <div class="form-group">
           <label class="form-label" for="gameName">Nombre de la Partida</label>
-          <input 
+          <input
             type="text"
             id="gameName"
             name="gameName"
@@ -34,7 +34,10 @@
             #gameNameInput="ngModel"
             maxlength="30"
           />
-          <div class="error-message" *ngIf="gameNameInput.invalid && gameNameInput.touched">
+          <div
+            class="error-message"
+            *ngIf="gameNameInput.invalid && gameNameInput.touched"
+          >
             El nombre de la partida es requerido
           </div>
         </div>
@@ -42,7 +45,7 @@
         <!-- Campo Cantidad de Colores -->
         <div class="form-group">
           <label class="form-label" for="colorCount">Cantidad de Colores</label>
-          <input 
+          <input
             type="number"
             id="colorCount"
             name="colorCount"
@@ -54,7 +57,10 @@
             required
             #colorCountInput="ngModel"
           />
-          <div class="error-message" *ngIf="colorCountInput.touched && (roomData.colorCount < 2 || roomData.colorCount > 6)">
+          <div
+            class="error-message"
+            *ngIf="colorCountInput.touched && (roomData.colorCount < 2 || roomData.colorCount > 6)"
+          >
             La cantidad de colores debe estar entre 2 y 6
           </div>
         </div>
@@ -72,18 +78,10 @@
 
         <!-- Modal Footer -->
         <div class="modal-footer">
-          <button 
-            type="button" 
-            class="btn-secondary" 
-            (click)="closeModal()"
-          >
+          <button type="button" class="btn-secondary" (click)="closeModal()">
             Cancelar
           </button>
-          <button 
-            type="submit" 
-            class="btn-primary"
-            [disabled]="form.invalid"
-          >
+          <button type="submit" class="btn-primary" [disabled]="form.invalid">
             Crear Partida
           </button>
         </div>
