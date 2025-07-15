@@ -85,9 +85,6 @@ export class RoomsPage implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Inicia el polling para actualizar las partidas automáticamente
-   */
   private startPolling(): void {
     this.pollingSubscription = interval(this.POLLING_INTERVAL)
       .pipe(
@@ -279,15 +276,12 @@ export class RoomsPage implements OnInit, OnDestroy {
     this.roomService.createRoom(createRoomData).subscribe({
       next: (response) => {
         console.log('Partida creada exitosamente:', response.data);
-        // Agregar la nueva partida al inicio de la lista
         this.rooms.unshift(response.data);
         this.isLoading = false;
 
-        // Establecer el estado de espera INMEDIATAMENTE
         this.isWaitingForPlayer = true;
         this.waitingRoom = response.data;
 
-        // Cerrar el modal
         this.closeModal();
 
         console.log('✅ Partida creada y estado de espera activado:', {
@@ -295,7 +289,6 @@ export class RoomsPage implements OnInit, OnDestroy {
           waitingRoom: this.waitingRoom,
         });
 
-        // Opcionalmente, mostrar un mensaje de éxito
         console.log(response.message);
       },
       error: (error) => {
