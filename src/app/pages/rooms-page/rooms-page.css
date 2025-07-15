@@ -694,6 +694,64 @@ body {
   animation-delay: 3s;
 }
 
+.waiting-view {
+  margin-top: 40px;
+  padding: 30px;
+  background-color: #222;
+  border: 2px dashed #00e5ff;
+  border-radius: 20px;
+  text-align: center;
+  color: white;
+  animation: pulse 2s infinite;
+}
+
+.btn-cancelar {
+  margin-top: 20px;
+  padding: 12px 24px;
+  background-color: transparent;
+  border: 2px solid #ff1744;
+  color: #ff1744;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.btn-cancelar:hover {
+  background-color: rgba(255, 23, 68, 0.2);
+  color: white;
+}
+
+.btn-cancelar {
+  margin-top: 20px;
+  padding: 12px 24px;
+  background: transparent;
+  border: 2px solid #ff1744;
+  color: #ff1744;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-cancelar:hover {
+  background: rgba(255, 23, 68, 0.1);
+  color: white;
+}
+
+/* Animación para dar efecto de espera */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 245, 255, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 245, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 245, 255, 0);
+  }
+}
+
 /* Animaciones */
 @keyframes fadeIn {
   from {

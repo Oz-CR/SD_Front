@@ -5,40 +5,59 @@
     </header>
 
     <main class="main-content">
-      <div class="page-title">
-        <div class="title-badge">Salas Activas</div>
-        <h1 class="main-title">Partidas Disponibles</h1>
-        <p class="subtitle">
-          Elige una sala y demuestra tu memoria en el desafío definitivo
-        </p>
-        <div class="action-buttons">
-          <button class="create-room-btn" (click)="openCreateRoomModal()">
-            <span class="btn-icon">+</span>
-            Crear Nueva Partida
-          </button>
-          <button
-            class="refresh-btn"
-            (click)="refreshRooms()"
-            [disabled]="isLoading"
-          >
-            <span class="refresh-icon">🔄</span>
-            Actualizar
-          </button>
-        </div>
-        <div class="polling-indicator" *ngIf="isPollingActive">
-          <span class="polling-dot"></span>
-          <span class="polling-text">Actualizando cada 5 segundos...</span>
+      <!-- Vista de Espera del Jugador 2 -->
+      <div *ngIf="isWaitingForPlayer && waitingRoom; else availableRooms">
+        <div class="waiting-view">
+          <div class="waiting-box">
+            <h2>🕒 Esperando al Jugador 2...</h2>
+            <p><strong>Nombre de la partida:</strong> {{ waitingRoom.name }}</p>
+            <p><strong>ID de la sala:</strong> {{ waitingRoom.id }}</p>
+            <p><strong>Jugadores:</strong> 1/2</p>
+
+            <button (click)="cancelWaitingRoom()" class="btn-cancelar">
+              Cancelar Partida
+            </button>
+          </div>
         </div>
       </div>
 
-      <div class="partidas-grid">
-        <app-room-card
-          *ngFor="let room of rooms; trackBy: trackByRoomId"
-          [room]="room"
-          [isJoining]="isJoiningRoom && joiningRoom?.id === room.id"
-          (joinRoomEvent)="handleJoinRoom($event)"
-        ></app-room-card>
-      </div>
+      <!-- Vista de Salas Disponibles -->
+      <ng-template #availableRooms>
+        <div class="page-title">
+          <div class="title-badge">Salas Activas</div>
+          <h1 class="main-title">Partidas Disponibles</h1>
+          <p class="subtitle">
+            Elige una sala y demuestra tu memoria en el desafío definitivo
+          </p>
+          <div class="action-buttons">
+            <button class="create-room-btn" (click)="openCreateRoomModal()">
+              <span class="btn-icon">+</span>
+              Crear Nueva Partida
+            </button>
+            <button
+              class="refresh-btn"
+              (click)="refreshRooms()"
+              [disabled]="isLoading"
+            >
+              <span class="refresh-icon">🔄</span>
+              Actualizar
+            </button>
+          </div>
+          <div class="polling-indicator" *ngIf="isPollingActive">
+            <span class="polling-dot"></span>
+            <span class="polling-text">Actualizando cada 5 segundos...</span>
+          </div>
+        </div>
+
+        <div class="partidas-grid">
+          <app-room-card
+            *ngFor="let room of rooms; trackBy: trackByRoomId"
+            [room]="room"
+            [isJoining]="isJoiningRoom && joiningRoom?.id === room.id"
+            (joinRoomEvent)="handleJoinRoom($event)"
+          ></app-room-card>
+        </div>
+      </ng-template>
     </main>
   </div>
 
