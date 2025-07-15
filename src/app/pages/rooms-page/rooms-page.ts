@@ -32,14 +32,15 @@ export class RoomsPage implements OnInit, OnDestroy {
   isLoading = false;
   error: string | null = null;
   private pollingSubscription: Subscription | null = null;
-  private readonly POLLING_INTERVAL = 5000; // 5 segundos
+  private readonly POLLING_INTERVAL = 5000;
+  private readonly WAITING_POLLING_INTERVAL = 1000; // 1 segundo cuando está esperando
 
-  // Estados para el jugador
   currentUser: UserInfo | null = null;
   isWaitingForPlayer = false;
   waitingRoom: Room | null = null;
   joiningRoom: Room | null = null;
   isJoiningRoom = false;
+  isCancellingRoom = false; // Bandera para evitar reapertura durante cancelación
 
   constructor(
     private roomService: RoomService,
@@ -56,28 +57,18 @@ export class RoomsPage implements OnInit, OnDestroy {
     this.stopPolling();
   }
 
-  /**
-   * Abre el modal para crear una nueva partida
-   */
   openCreateRoomModal(): void {
     this.isModalVisible = true;
   }
 
-  /**
-   * Cierra el modal
-   */
   closeModal(): void {
     this.isModalVisible = false;
   }
 
-  /**
-   * Carga la información del usuario actual
-   */
   private loadCurrentUser(): void {
     this.currentUser = this.roomService.getCurrentUserInfo();
     console.log('Usuario actual:', this.currentUser);
 
-    // Si no hay usuario, redirigir al login
     if (!this.currentUser) {
       console.log('No hay usuario logueado, redirigiendo al login');
       this.router.navigate(['/login']);
@@ -86,9 +77,11 @@ export class RoomsPage implements OnInit, OnDestroy {
   }
 
   private startPolling(): void {
-    this.pollingSubscription = interval(this.POLLING_INTERVAL)
+    const pollingInterval = this.isWaitingForPlayer ? this.WAITING_POLLING_INTERVAL : this.POLLING_INTERVAL;
+    
+    this.pollingSubscription = interval(pollingInterval)
       .pipe(
-        startWith(0), // Ejecuta inmediatamente al suscribirse
+        startWith(0),
         switchMap(() => this.roomService.getAvailableRooms()),
         catchError((error) => {
           console.error('Error en polling:', error);
@@ -102,7 +95,6 @@ export class RoomsPage implements OnInit, OnDestroy {
           this.isLoading = false;
           this.error = null;
 
-          // Verificar si el usuario está esperando en alguna partida
           this.checkWaitingStatus();
 
           console.log('Partidas actualizadas:', this.rooms);
@@ -115,42 +107,33 @@ export class RoomsPage implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * Detiene el polling
-   */
   private stopPolling(): void {
     if (this.pollingSubscription) {
       this.pollingSubscription.unsubscribe();
       this.pollingSubscription = null;
     }
   }
+  
+  private restartPolling(): void {
+    console.log('Reiniciando polling con intervalo más frecuente...');
+    this.stopPolling();
+    this.startPolling();
+  }
 
-  /**
-   * Pausa el polling (útil cuando el usuario está en otra pestaña)
-   */
   pausePolling(): void {
     this.stopPolling();
   }
 
-  /**
-   * Reanuda el polling
-   */
   resumePolling(): void {
     if (!this.pollingSubscription) {
       this.startPolling();
     }
   }
 
-  /**
-   * Refresh manual de las partidas
-   */
   refreshRooms(): void {
     this.loadRooms();
   }
 
-  /**
-   * Carga las partidas disponibles del backend (método manual)
-   */
   loadRooms(): void {
     this.isLoading = true;
     this.error = null;
@@ -170,9 +153,6 @@ export class RoomsPage implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Verifica si el usuario está esperando en alguna partida
-   */
   private checkWaitingStatus(): void {
     if (!this.currentUser) {
       console.log(
@@ -181,87 +161,129 @@ export class RoomsPage implements OnInit, OnDestroy {
       return;
     }
 
-    // Si el usuario se está uniendo a una partida, no verificar estado de espera
-    if (this.isJoiningRoom) {
-      console.log(
-        '🔄 Usuario se está uniendo a partida, saltando verificación de espera'
-      );
-      return;
-    }
-
     console.log(
       'Verificando estado de espera para usuario:',
       this.currentUser.id
     );
-    console.log(
-      'Partidas disponibles:',
-      this.rooms.map((r) => ({
-        id: r.id,
-        name: r.name,
-        player1Id: r.player1Id,
-        player2Id: r.player2Id,
-        status: r.status,
-      }))
-    );
 
-    // Buscar si el usuario está como player1 en una partida en estado 'waiting'
-    const waitingRoom = this.rooms.find((room) => {
-      // Convertir ambos IDs a string para comparación segura
-      const roomPlayer1Id = String(room.player1Id);
-      const currentUserId = String(this.currentUser!.id);
-
-      const isPlayer1 = roomPlayer1Id === currentUserId;
-      const isWaiting = room.status === 'waiting';
-      const hasOnlyOnePlayer = room.currentPlayers === 1;
-
-      console.log(
-        `Partida ${room.id}: player1=${
-          room.player1Id
-        }(${typeof room.player1Id}), currentUserId=${
-          this.currentUser!.id
-        }(${typeof this.currentUser!.id}), isPlayer1=${isPlayer1}, status=${
-          room.status
-        }, isWaiting=${isWaiting}, players=${room.currentPlayers}`
-      );
-
-      return isPlayer1 && isWaiting && hasOnlyOnePlayer;
+    const userRoom = this.rooms.find((room) => {
+      const roomPlayer1Id = Number(room.player1Id);
+      const currentUserId = Number(this.currentUser!.id);
+      return roomPlayer1Id === currentUserId;
     });
 
-    if (waitingRoom) {
-      // Solo activar la landing si no estamos uniéndonos a otra partida
-      if (!this.isJoiningRoom) {
-        this.isWaitingForPlayer = true;
-        this.waitingRoom = waitingRoom;
-        console.log('✅ Usuario está esperando en la partida:', waitingRoom);
+    if (userRoom) {
+      console.log('🔍 Usuario encontrado en partida:', userRoom);
+
+      // Si la partida está terminada o cancelada, limpiar estado de espera
+      if (userRoom.status === 'finished') {
+        console.log('🚫 Partida terminada/cancelada, limpiando estado de espera');
+        if (this.isWaitingForPlayer) {
+          this.isWaitingForPlayer = false;
+          this.waitingRoom = null;
+        }
+        return;
+      }
+
+      if (userRoom.currentPlayers === 2) {
+        console.log('🎮 Segundo jugador se ha unido, entrando al juego...');
+        this.redirectToGame(userRoom);
+        return;
+      }
+
+      if (userRoom.status === 'waiting' && userRoom.currentPlayers === 1) {
+        if (!this.isWaitingForPlayer && !this.isCancellingRoom) {
+          console.log('✅ Usuario está esperando en la partida:', userRoom);
+          this.isWaitingForPlayer = true;
+          this.waitingRoom = userRoom;
+          // Reiniciar polling con intervalo más frecuente
+          this.restartPolling();
+        }
       }
     } else {
-      // Solo cambiar el estado si realmente no está esperando
+      if (this.isWaitingForPlayer && this.waitingRoom) {
+        console.log(
+          '🚨 Partida de espera desapareció - ¡Segundo jugador se unió!'
+        );
+        console.log('🎮 Redirigiendo al juego...');
+
+        const gameRoom = {
+          ...this.waitingRoom,
+          currentPlayers: 2,
+          status: 'in_progress',
+        };
+
+        this.redirectToGame(gameRoom);
+        return;
+      }
+
       if (this.isWaitingForPlayer) {
-        console.log('❌ Usuario ya no está esperando, cambiando estado');
+        console.log('❌ Limpiando estado de espera');
         this.isWaitingForPlayer = false;
         this.waitingRoom = null;
       }
     }
   }
 
-  /**
-   * Cancela la partida mientras se espera al segundo jugador
-   */
-  cancelWaitingRoom(): void {
-    if (!this.waitingRoom) return;
-
-    // Aquí podrías implementar un método para cancelar la partida
-    console.log('Cancelando partida:', this.waitingRoom);
+  private redirectToGame(room: any): void {
+    console.log('🎮 Redirigiendo al juego, limpiando estado de espera...');
     this.isWaitingForPlayer = false;
     this.waitingRoom = null;
 
-    // Recargar las partidas
-    this.loadRooms();
+    this.stopPolling();
+
+    localStorage.setItem('current_game', JSON.stringify(room));
+
+    this.router.navigate(['/juego', room.id]);
+  }
+  cancelWaitingRoom(): void {
+    if (!this.waitingRoom) return;
+
+    console.log('Cancelando partida:', this.waitingRoom);
+    
+    // Detener el polling inmediatamente para evitar conflictos
+    this.stopPolling();
+    
+    // Cerrar el modal inmediatamente
+    const roomIdToCancel = this.waitingRoom.id;
+    this.isWaitingForPlayer = false;
+    this.waitingRoom = null;
+    
+    // Cambiar el estado de la partida a 'finished' usando el endpoint de actualización
+    const cancelGameData = {
+      status: 'finished',
+      playerLeft: 1, // El jugador 1 (creador) canceló
+      gameOver: true,
+      cancelled: true
+    };
+    
+    this.roomService.updateGameState(roomIdToCancel, cancelGameData).subscribe({
+      next: (response) => {
+        console.log('Partida cancelada exitosamente:', response);
+        
+        // Dar tiempo al servidor para actualizar antes de reanudar polling
+        setTimeout(() => {
+          this.restartPolling();
+          this.loadRooms();
+        }, 500);
+        
+        console.log('Partida cancelada y lista actualizada');
+      },
+      error: (error) => {
+        console.error('Error al cancelar partida:', error);
+        
+        // Mostrar error al usuario pero mantener el modal cerrado
+        this.error = error.error?.message || 'Error al cancelar la partida, pero se cerró el modal.';
+        
+        // Reanudar polling después de un breve delay incluso si hay error
+        setTimeout(() => {
+          this.restartPolling();
+          this.loadRooms();
+        }, 500);
+      }
+    });
   }
 
-  /**
-   * Maneja la creación de una nueva partida
-   */
   onCreateRoom(roomData: RoomData): void {
     console.log('Nueva partida creada:', roomData);
 
@@ -281,6 +303,9 @@ export class RoomsPage implements OnInit, OnDestroy {
 
         this.isWaitingForPlayer = true;
         this.waitingRoom = response.data;
+        
+        // Reiniciar polling con intervalo más frecuente
+        this.restartPolling();
 
         this.closeModal();
 
@@ -301,16 +326,10 @@ export class RoomsPage implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Función trackBy para optimizar el rendimiento del *ngFor
-   */
   trackByRoomId(index: number, room: Room): string {
     return room.id;
   }
 
-  /**
-   * Getter para verificar si el polling está activo (para el template)
-   */
   get isPollingActive(): boolean {
     return this.pollingSubscription !== null;
   }
@@ -331,13 +350,10 @@ export class RoomsPage implements OnInit, OnDestroy {
       next: (response) => {
         console.log('✅ Unión exitosa:', response.data);
 
-        // Detener polling y redirigir a la sala de juego (si aplica)
         this.stopPolling();
 
-        // Opcional: puedes guardar los datos del juego en localStorage o en un servicio
         localStorage.setItem('current_game', JSON.stringify(response.data));
 
-        // Redireccionar a la vista de juego
         this.router.navigate(['/juego', room.id]);
       },
       error: (err) => {

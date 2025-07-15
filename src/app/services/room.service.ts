@@ -137,4 +137,35 @@ export class RoomService {
     }
     return null;
   }
+
+  /**
+   * Obtiene el estado actual del juego
+   */
+  getGameState(roomId: string): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.get<any>(`${this.apiUrl}/game/${roomId}/state`, {
+      headers,
+    });
+  }
+
+  /**
+   * Actualiza el estado del juego
+   */
+  updateGameState(roomId: string, gameState: any): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.post<any>(`${this.apiUrl}/game/${roomId}/update`, gameState, {
+      headers,
+    });
+  }
+
+  /**
+   * Realiza un movimiento en el juego
+   */
+  makeMove(roomId: string, move: any): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.post<any>(`${this.apiUrl}/game/${roomId}/move`, move, {
+      headers,
+    });
+  }
+
 }

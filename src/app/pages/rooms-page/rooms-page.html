@@ -14,9 +14,6 @@
             <p><strong>ID de la sala:</strong> {{ waitingRoom.id }}</p>
             <p><strong>Jugadores:</strong> 1/2</p>
 
-            <button (click)="cancelWaitingRoom()" class="btn-cancelar">
-              Cancelar Partida
-            </button>
           </div>
         </div>
       </div>
@@ -45,7 +42,7 @@
           </div>
           <div class="polling-indicator" *ngIf="isPollingActive">
             <span class="polling-dot"></span>
-            <span class="polling-text">Actualizando cada 5 segundos...</span>
+            <span class="polling-text">Actualizando cada {{ isWaitingForPlayer ? 1 : 5 }} segundo{{ isWaitingForPlayer ? '' : 's' }}...</span>
           </div>
         </div>
 
