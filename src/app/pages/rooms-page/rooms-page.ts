@@ -181,69 +181,81 @@ export class RoomsPage implements OnInit, OnDestroy {
       return;
     }
 
-    // Si el usuario se está uniendo a una partida, no verificar estado de espera
-    if (this.isJoiningRoom) {
-      console.log(
-        '🔄 Usuario se está uniendo a partida, saltando verificación de espera'
-      );
-      return;
-    }
-
     console.log(
       'Verificando estado de espera para usuario:',
       this.currentUser.id
     );
-    console.log(
-      'Partidas disponibles:',
-      this.rooms.map((r) => ({
-        id: r.id,
-        name: r.name,
-        player1Id: r.player1Id,
-        player2Id: r.player2Id,
-        status: r.status,
-      }))
-    );
 
-    // Buscar si el usuario está como player1 en una partida en estado 'waiting'
-    const waitingRoom = this.rooms.find((room) => {
-      // Convertir ambos IDs a string para comparación segura
-      const roomPlayer1Id = String(room.player1Id);
-      const currentUserId = String(this.currentUser!.id);
-
-      const isPlayer1 = roomPlayer1Id === currentUserId;
-      const isWaiting = room.status === 'waiting';
-      const hasOnlyOnePlayer = room.currentPlayers === 1;
-
-      console.log(
-        `Partida ${room.id}: player1=${
-          room.player1Id
-        }(${typeof room.player1Id}), currentUserId=${
-          this.currentUser!.id
-        }(${typeof this.currentUser!.id}), isPlayer1=${isPlayer1}, status=${
-          room.status
-        }, isWaiting=${isWaiting}, players=${room.currentPlayers}`
-      );
-
-      return isPlayer1 && isWaiting && hasOnlyOnePlayer;
+    // Buscar si el usuario está como player1 en alguna partida
+    const userRoom = this.rooms.find((room) => {
+      const roomPlayer1Id = Number(room.player1Id);
+      const currentUserId = Number(this.currentUser!.id);
+      return roomPlayer1Id === currentUserId;
     });
 
-    if (waitingRoom) {
-      // Solo activar la landing si no estamos uniéndonos a otra partida
-      if (!this.isJoiningRoom) {
-        this.isWaitingForPlayer = true;
-        this.waitingRoom = waitingRoom;
-        console.log('✅ Usuario está esperando en la partida:', waitingRoom);
+    if (userRoom) {
+      console.log('🔍 Usuario encontrado en partida:', userRoom);
+
+      // Si la partida tiene 2 jugadores, redirigir al juego
+      if (userRoom.currentPlayers === 2) {
+        console.log('🎮 Segundo jugador se ha unido, entrando al juego...');
+        this.redirectToGame(userRoom);
+        return;
+      }
+
+      // Si la partida está esperando, actualizar estado
+      if (userRoom.status === 'waiting' && userRoom.currentPlayers === 1) {
+        if (!this.isWaitingForPlayer) {
+          console.log('✅ Usuario está esperando en la partida:', userRoom);
+          this.isWaitingForPlayer = true;
+          this.waitingRoom = userRoom;
+        }
       }
     } else {
-      // Solo cambiar el estado si realmente no está esperando
+      // Si estábamos esperando y la partida desapareció, es porque se llenó
+      if (this.isWaitingForPlayer && this.waitingRoom) {
+        console.log(
+          '🚨 Partida de espera desapareció - ¡Segundo jugador se unió!'
+        );
+        console.log('🎮 Redirigiendo al juego...');
+
+        // Crear objeto room para la redirección
+        const gameRoom = {
+          ...this.waitingRoom,
+          currentPlayers: 2,
+          status: 'in_progress',
+        };
+
+        this.redirectToGame(gameRoom);
+        return;
+      }
+
+      // Limpiar estado si no estábamos esperando
       if (this.isWaitingForPlayer) {
-        console.log('❌ Usuario ya no está esperando, cambiando estado');
+        console.log('❌ Limpiando estado de espera');
         this.isWaitingForPlayer = false;
         this.waitingRoom = null;
       }
     }
   }
 
+  /**
+   * Redirige al juego y limpia el estado
+   */
+  private redirectToGame(room: any): void {
+    // Limpiar estados de espera
+    this.isWaitingForPlayer = false;
+    this.waitingRoom = null;
+
+    // Detener polling
+    this.stopPolling();
+
+    // Guardar datos del juego
+    localStorage.setItem('current_game', JSON.stringify(room));
+
+    // Redirigir al juego
+    this.router.navigate(['/juego', room.id]);
+  }
   /**
    * Cancela la partida mientras se espera al segundo jugador
    */
