@@ -1,1 +1,60 @@
-<p>game-page works!</p>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="logo">SIMON.NEURAL</div>
+      <div class="game-info">
+        <span class="round-info">Juega!</span>
+        <span class="player-info">{{ currentUser?.fullName }}</span>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="left-content">
+        <div class="challenge-badge">{{ roomName }}</div>
+        
+        <h1 class="main-title">SIMON DICE</h1>
+        <h2 class="subtitle">{{ getDifficultyText() }}</h2>
+        
+        <!-- Estado del juego -->
+        <div class="game-status">
+          <div class="status-card" [class.active]="isShowingSequence">
+            <div class="status-icon">👁️</div>
+            <div class="status-text">Observa la secuencia</div>
+          </div>
+          <div class="status-card" [class.active]="isPlayerTurn">
+            <div class="status-icon">🎮</div>
+            <div class="status-text">Tu turno</div>
+          </div>
+          <div class="status-card" [class.active]="isWaiting">
+            <div class="status-icon">⏳</div>
+            <div class="status-text">Esperando...</div>
+          </div>
+        </div>
+        
+        <!-- Controles -->
+        <div class="game-controls">
+          <button class="control-btn" (click)="backToRooms()">
+            <span class="btn-icon">🏠</span>
+            Volver
+          </button>
+        </div>
+      </div>
+
+      <div class="right-content">
+        <div class="simon-circle floating">
+          <div 
+            class="simon-segment" 
+            *ngFor="let i of getSegmentNumbers()" 
+            [class]="'segment-' + (i + 1)"
+            [class.active]="activeSegment === i"
+            [class.disabled]="!isPlayerTurn"
+            (click)="handleUserInput(i)"
+          ></div>
+          <div class="simon-center">
+            <div class="center-subtitle">Simon Says!</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
