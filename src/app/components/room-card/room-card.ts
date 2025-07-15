@@ -11,6 +11,7 @@ import { Room } from '../../services/room.service';
 })
 export class RoomCardComponent {
   @Input() room!: Room;
+  @Input() isJoining: boolean = false;
   @Output() joinRoomEvent = new EventEmitter<Room>();
 
   constructor() {}
@@ -58,6 +59,10 @@ export class RoomCardComponent {
    * Obtiene el texto del botón según el estado de la sala
    */
   getButtonText(): string {
+    if (this.isJoining) {
+      return 'Uniéndose...';
+    }
+    
     if (!this.room.isActive) {
       return 'Sala Inactiva';
     }
@@ -73,7 +78,7 @@ export class RoomCardComponent {
    * Verifica si la sala está disponible para unirse
    */
   isRoomAvailable(): boolean {
-    return this.room.isActive && this.room.currentPlayers < this.room.maxPlayers;
+    return this.room.isActive && this.room.currentPlayers < this.room.maxPlayers && !this.isJoining;
   }
 
   /**

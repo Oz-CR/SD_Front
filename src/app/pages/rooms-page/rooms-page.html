@@ -24,7 +24,11 @@
             <span class="btn-icon">+</span>
             Crear Nueva Partida
           </button>
-          <button class="refresh-btn" (click)="refreshRooms()" [disabled]="isLoading">
+          <button
+            class="refresh-btn"
+            (click)="refreshRooms()"
+            [disabled]="isLoading"
+          >
             <span class="refresh-icon">🔄</span>
             Actualizar
           </button>
@@ -39,7 +43,66 @@
       <div *ngIf="error" class="error-message">
         <div class="error-icon">⚠️</div>
         <p>{{ error }}</p>
-        <button class="btn-retry" (click)="loadRooms()">Intentar nuevamente</button>
+        <button class="btn-retry" (click)="loadRooms()">
+          Intentar nuevamente
+        </button>
+      </div>
+
+      <!-- Landing de espera - Cuando el jugador está esperando al segundo jugador -->
+      <!-- Debug: isWaitingForPlayer={{isWaitingForPlayer}}, waitingRoom={{!!waitingRoom}} -->
+      <div *ngIf="isWaitingForPlayer && waitingRoom" class="waiting-landing">
+        <div class="waiting-container">
+          <div class="waiting-animation">
+            <div class="pulsing-circle"></div>
+            <div class="waiting-icon">⏳</div>
+          </div>
+
+          <div class="waiting-content">
+            <h2 class="waiting-title">Esperando al segundo jugador...</h2>
+            <p class="waiting-subtitle">
+              Tu partida "{{ waitingRoom.name }}" está lista
+            </p>
+
+            <div class="game-info">
+              <div class="info-item">
+                <span class="info-label">Dificultad:</span>
+                <span class="info-value"
+                  >{{ waitingRoom.colorCount }} colores</span
+                >
+              </div>
+              <div class="info-item">
+                <span class="info-label">Jugadores:</span>
+                <span class="info-value"
+                  >{{ waitingRoom.currentPlayers }}/{{ waitingRoom.maxPlayers
+                  }}</span
+                >
+              </div>
+              <div class="info-item">
+                <span class="info-label">Anfitrión:</span>
+                <span class="info-value">{{ waitingRoom.host }}</span>
+              </div>
+            </div>
+
+            <div class="waiting-actions">
+              <button class="btn-cancel" (click)="cancelWaitingRoom()">
+                Cancelar Partida
+              </button>
+              <button class="btn-refresh" (click)="loadRooms()">
+                <span class="refresh-icon">🔄</span>
+                Actualizar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="waiting-background">
+          <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+          </div>
+        </div>
       </div>
 
       <!-- Indicador de carga -->
@@ -60,12 +123,13 @@
             Crear Primera Partida
           </button>
         </div>
-        
+
         <!-- Usar el componente room-card -->
-        <app-room-card 
+        <app-room-card
           *ngFor="let room of rooms; trackBy: trackByRoomId"
           [room]="room"
-          (joinRoomEvent)="onJoinRoom($event)"
+          [isJoining]="isJoiningRoom && joiningRoom?.id === room.id"
+          (joinRoomEvent)="handleJoinRoom($event)"
         ></app-room-card>
       </div>
     </main>
@@ -90,9 +154,9 @@
       this.style.transform = "scale(1)";
     });
   </script>
-  
+
   <!-- Modal para crear nueva partida -->
-  <app-create-room-modal 
+  <app-create-room-modal
     [isVisible]="isModalVisible"
     (closeModalEvent)="closeModal()"
     (createRoomEvent)="onCreateRoom($event)"

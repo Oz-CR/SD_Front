@@ -41,9 +41,19 @@ export class Register {
     this.authService.register(formData).subscribe({
       next: (response) => {
         console.log('✅ Registro exitoso:', response);
-        this.router.navigate(['/login']);
+        
+        // Guardar token y información del usuario
         localStorage.setItem('token', response.data.token.value);
+        localStorage.setItem('current_user', JSON.stringify(response.data.user));
+        
+        console.log('💾 Datos guardados en localStorage:', {
+          token: response.data.token.value,
+          user: response.data.user
+        });
+        
         alert(response.message || 'Registro exitoso');
+        // Ir directamente a rooms si ya tiene datos guardados
+        this.router.navigate(['/rooms']);
       },
       error: (error) => {
         console.error('❌ Error en el registro:', error);

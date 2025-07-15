@@ -35,9 +35,18 @@ export class Login {
     this.authService.login(formData).subscribe({
       next: (response) => {
         console.log('✅ Inicio de sesión exitoso:', response);
-        this.router.navigate(['/dashboard']);
+        
+        // Guardar token y información del usuario
         localStorage.setItem('token', response.data.token.value);
+        localStorage.setItem('current_user', JSON.stringify(response.data.user));
+        
+        console.log('💾 Datos guardados en localStorage:', {
+          token: response.data.token.value,
+          user: response.data.user
+        });
+        
         alert(response.message || 'Inicio de sesión exitoso');
+        this.router.navigate(['/rooms']);
       },
       error: (error) => {
         console.error('❌ Error en el inicio de sesión:', error);

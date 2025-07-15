@@ -32,8 +32,13 @@ export interface CreateRoomResponse {
   data: Room;
 }
 
+export interface JoinRoomResponse {
+  message: string;
+  data: Room;
+}
+
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RoomService {
   private apiUrl = 'http://localhost:3333';
@@ -48,7 +53,9 @@ export class RoomService {
    */
   getAvailableRooms(): Observable<RoomResponse> {
     const headers = this.getHeaders();
-    return this.http.get<RoomResponse>(`${this.apiUrl}/partidas/disponibilad`, { headers });
+    return this.http.get<RoomResponse>(`${this.apiUrl}/partidas/disponibilad`, {
+      headers,
+    });
   }
 
   /**
@@ -56,7 +63,23 @@ export class RoomService {
    */
   createRoom(roomData: CreateRoomData): Observable<CreateRoomResponse> {
     const headers = this.getHeaders();
-    return this.http.post<CreateRoomResponse>(`${this.apiUrl}/createRoom`, roomData, { headers });
+    return this.http.post<CreateRoomResponse>(
+      `${this.apiUrl}/createRoom`,
+      roomData,
+      { headers }
+    );
+  }
+
+  /**
+   * Unirse a una partida existente
+   */
+  joinGame(roomId: string): Observable<JoinRoomResponse> {
+    const headers = this.getHeaders();
+    return this.http.post<JoinRoomResponse>(
+      `${this.apiUrl}/partidas/join/${roomId}`,
+      {},
+      { headers }
+    );
   }
 
   /**
@@ -64,14 +87,14 @@ export class RoomService {
    */
   private getHeaders(): HttpHeaders {
     let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    
+
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('token');
       if (token) {
         headers = headers.set('Authorization', `Bearer ${token}`);
       }
     }
-    
+
     return headers;
   }
 
@@ -83,7 +106,6 @@ export class RoomService {
       const token = localStorage.getItem('auth_token');
       if (token) {
         try {
-          // Decodificar el token JWT para obtener el ID del usuario
           const payload = JSON.parse(atob(token.split('.')[1]));
           return payload.sub || payload.id || null;
         } catch (error) {

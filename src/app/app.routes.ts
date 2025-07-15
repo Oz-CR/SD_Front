@@ -23,7 +23,7 @@ export const routes: Routes = [
     component: RoomsPage,
   },
   {
-    path: 'game',
+    path: 'juego/:id',
     component: GamePage,
   },
 ];

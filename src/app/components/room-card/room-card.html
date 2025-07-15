@@ -29,9 +29,10 @@
   
   <button 
     class="join-button" 
-    [disabled]="!room.isActive || room.currentPlayers >= room.maxPlayers"
+    [disabled]="!room.isActive || room.currentPlayers >= room.maxPlayers || isJoining"
     (click)="onJoinRoom()"
   >
+    <span *ngIf="isJoining" class="joining-spinner"></span>
     {{ getButtonText() }}
   </button>
 </div>
