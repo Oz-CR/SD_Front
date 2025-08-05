@@ -41,7 +41,7 @@ export interface JoinRoomResponse {
   providedIn: 'root',
 })
 export class RoomService {
-  private apiUrl = 'https://b6acfc70646a.ngrok-free.app';
+  private apiUrl = 'https://54edbb588162.ngrok-free.app';
 
   constructor(
     private http: HttpClient,
