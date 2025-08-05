@@ -49,7 +49,7 @@ export interface UserLoginData {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3333/api/auth';
+  private apiUrl = 'https://54edbb588162.ngrok-free.app/api/auth';
 
   constructor(
     private http: HttpClient,
@@ -115,33 +115,33 @@ export class AuthService {
    */
   isTokenValid(token: string): boolean {
     if (!token) return false;
-    
+
     try {
       // Si el token es un access token de AdonisJS (formato: oat_N.token)
       if (token.startsWith('oat_')) {
         // Para access tokens, verificar formato básico
         const parts = token.split('.');
         if (parts.length !== 2) return false;
-        
+
         // Verificar que las partes no estén vacías
         if (!parts[0] || !parts[1]) return false;
-        
+
         return true;
       }
-      
+
       // Si es un JWT, verificar estructura JWT
       const parts = token.split('.');
       if (parts.length !== 3) return false;
-      
+
       // Intentar decodificar el payload
       const payload = JSON.parse(atob(parts[1]));
-      
+
       // Verificar que el token no haya expirado
       if (payload.exp && Date.now() >= payload.exp * 1000) {
         console.log('🚫 Token expirado');
         return false;
       }
-      
+
       return true;
     } catch (error) {
       console.error('Error al validar token:', error);
