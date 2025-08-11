@@ -50,8 +50,7 @@ export class CreateRoomModalComponent {
    */
   private isFormValid(): boolean {
     return this.roomData.gameName.trim().length > 0 && 
-           this.roomData.colorCount >= 2 && 
-           this.roomData.colorCount <= 6;
+           this.roomData.colorCount >= 2;
   }
 
   /**
@@ -72,10 +71,17 @@ export class CreateRoomModalComponent {
       2: 'Fácil',
       3: 'Medio',
       4: 'Difícil',
-      5: 'Muy Difícil'
+      5: 'Muy Difícil',
+      6: 'Experto'
     };
     
-    return difficultyLabels[this.roomData.colorCount] || 'Personalizado';
+    if (this.roomData.colorCount <= 6) {
+      return difficultyLabels[this.roomData.colorCount] || 'Personalizado';
+    } else if (this.roomData.colorCount <= 10) {
+      return 'Extremo';
+    } else {
+      return 'Imposible';
+    }
   }
 
   /**
@@ -87,11 +93,15 @@ export class CreateRoomModalComponent {
       3: 'Nivel intermedio. Requiere más concentración y memoria.',
       4: 'Nivel avanzado. Desafío estándar de Simon Says.',
       5: 'Nivel muy avanzado. Requiere excelente memoria y concentración.',
-      6: 'Máximo desafío. Solo para jugadores experimentados.'
+      6: 'Nivel experto. Gran desafío para jugadores experimentados.'
     };
     
-    return descriptions[this.roomData.colorCount] || 
-           `Desafío personalizado con ${this.roomData.colorCount} colores.`;
+    if (this.roomData.colorCount <= 6) {
+      return descriptions[this.roomData.colorCount] || 
+             `Desafío personalizado con ${this.roomData.colorCount} colores.`;
+    } else {
+      return `Desafío extremo con ${this.roomData.colorCount} colores. ¡Solo para maestros!`;
+    }
   }
 
   /**

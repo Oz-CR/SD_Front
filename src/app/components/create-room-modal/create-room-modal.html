@@ -50,18 +50,18 @@
             id="colorCount"
             name="colorCount"
             class="form-input"
-            placeholder="Cantidad de colores (2 - 6)"
+            placeholder="Cantidad de colores (mínimo 2)"
             [(ngModel)]="roomData.colorCount"
             min="2"
-            max="6"
+            max="50"
             required
             #colorCountInput="ngModel"
           />
           <div
             class="error-message"
-            *ngIf="colorCountInput.touched && (roomData.colorCount < 2 || roomData.colorCount > 6)"
+            *ngIf="colorCountInput.touched && (roomData.colorCount < 2 || roomData.colorCount > 50)"
           >
-            La cantidad de colores debe estar entre 2 y 6
+            La cantidad de colores debe estar entre 2 y 50
           </div>
         </div>
 

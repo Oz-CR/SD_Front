@@ -53,7 +53,7 @@ export class RoomService {
    */
   getAvailableRooms(): Observable<RoomResponse> {
     const headers = this.getHeaders();
-    return this.http.get<RoomResponse>(`${this.apiUrl}/partidas/disponibilad`, {
+    return this.http.get<RoomResponse>(`${this.apiUrl}/api/partidas/disponibles`, {
       headers,
     });
   }
@@ -64,7 +64,7 @@ export class RoomService {
   createRoom(roomData: CreateRoomData): Observable<CreateRoomResponse> {
     const headers = this.getHeaders();
     return this.http.post<CreateRoomResponse>(
-      `${this.apiUrl}/createRoom`,
+      `${this.apiUrl}/api/createRoom`,
       roomData,
       { headers }
     );
@@ -76,10 +76,20 @@ export class RoomService {
   joinGame(roomId: string): Observable<JoinRoomResponse> {
     const headers = this.getHeaders();
     return this.http.post<JoinRoomResponse>(
-      `${this.apiUrl}/partidas/join/${roomId}`,
+      `${this.apiUrl}/api/partidas/join/${roomId}`,
       {},
       { headers }
     );
+  }
+
+  /**
+   * Obtiene los detalles de una sala específica
+   */
+  getRoomDetails(roomId: string): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.get(`${this.apiUrl}/api/rooms/${roomId}/details`, {
+      headers,
+    });
   }
 
   /**
