@@ -100,6 +100,46 @@
   background-clip: text;
 }
 
+.selected-colors-preview {
+  margin: 15px 0;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.colors-label {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.colors-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.color-preview {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  transition: all 0.3s ease;
+  cursor: help;
+  position: relative;
+}
+
+.color-preview:hover {
+  transform: scale(1.2);
+  border-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
 .difficulty-badge {
   display: flex;
   align-items: center;
@@ -173,8 +213,7 @@
 
 /* Animaciones */
 @keyframes pulse-green {
-  0%,
-  100% {
+  0%, 100% {
     opacity: 1;
     transform: scale(1);
   }
@@ -185,8 +224,7 @@
 }
 
 @keyframes pulse-gray {
-  0%,
-  100% {
+  0%, 100% {
     opacity: 0.6;
     transform: scale(1);
   }
@@ -209,5 +247,19 @@
   
   .difficulty-badge {
     margin-bottom: 15px;
+  }
+  
+  .selected-colors-preview {
+    padding: 10px;
+    margin: 12px 0;
+  }
+  
+  .color-preview {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .colors-label {
+    font-size: 12px;
   }
 }

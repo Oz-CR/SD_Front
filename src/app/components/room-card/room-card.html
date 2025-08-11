@@ -22,6 +22,18 @@
     </div>
   </div>
   
+  <div class="selected-colors-preview" *ngIf="room.selectedColors && room.selectedColors.length > 0">
+    <div class="colors-label">Colores seleccionados:</div>
+    <div class="colors-row">
+      <div 
+        *ngFor="let colorName of room.selectedColors" 
+        class="color-preview"
+        [style.background-color]="getColorHex(colorName)"
+        [title]="getColorDisplayName(colorName)"
+      ></div>
+    </div>
+  </div>
+  
   <div class="difficulty-badge">
     <span class="difficulty-icon">{{ getDifficultyIcon() }}</span>
     <span class="difficulty-text">{{ getDifficultyLabel() }}</span>

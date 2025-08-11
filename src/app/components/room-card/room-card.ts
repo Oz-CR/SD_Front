@@ -14,11 +14,46 @@ export class RoomCardComponent {
   @Input() isJoining: boolean = false;
   @Output() joinRoomEvent = new EventEmitter<Room>();
 
+  private colorNameToHex: { [key: string]: string } = {
+    'red': '#FF4444',
+    'blue': '#4444FF', 
+    'green': '#44FF44',
+    'yellow': '#FFFF44',
+    'orange': '#FF8844',
+    'purple': '#FF44FF',
+    'pink': '#FF88BB',
+    'cyan': '#44FFFF',
+    'lime': '#88FF44',
+    'indigo': '#4444AA',
+    'brown': '#8B4513',
+    'gray': '#808080',
+    'navy': '#000080',
+    'maroon': '#800000',
+    'olive': '#808000',
+    'teal': '#008080'
+  };
+
+  private colorDisplayNames: { [key: string]: string } = {
+    'red': 'Rojo',
+    'blue': 'Azul',
+    'green': 'Verde',
+    'yellow': 'Amarillo',
+    'orange': 'Naranja',
+    'purple': 'Morado',
+    'pink': 'Rosa',
+    'cyan': 'Cian',
+    'lime': 'Lima',
+    'indigo': 'Índigo',
+    'brown': 'Marrón',
+    'gray': 'Gris',
+    'navy': 'Azul Marino',
+    'maroon': 'Granate',
+    'olive': 'Oliva',
+    'teal': 'Verde Azulado'
+  };
+
   constructor() {}
 
-  /**
-   * Emite el evento para unirse a la sala
-   */
   onJoinRoom(): void {
     if (this.room.isActive && this.room.currentPlayers < this.room.maxPlayers) {
       this.joinRoomEvent.emit(this.room);
@@ -26,38 +61,39 @@ export class RoomCardComponent {
   }
 
   /**
-   * Obtiene la etiqueta de dificultad basada en la cantidad de colores
+   * FIXED: Etiquetas de dificultad para colores ilimitados
    */
   getDifficultyLabel(): string {
-    const difficultyLabels: { [key: number]: string } = {
-      2: 'Fácil',
-      3: 'Medio',
-      4: 'Difícil',
-      5: 'Muy Difícil',
-      6: 'Extremo'
-    };
+    const colorCount = this.room.colorCount;
     
-    return difficultyLabels[this.room.colorCount] || 'Personalizado';
+    if (colorCount <= 2) return 'Fácil';
+    if (colorCount <= 3) return 'Medio';
+    if (colorCount <= 4) return 'Difícil';
+    if (colorCount <= 6) return 'Muy Difícil';
+    if (colorCount <= 8) return 'Extremo';
+    if (colorCount <= 10) return 'Insano';
+    if (colorCount <= 12) return 'Imposible';
+    if (colorCount <= 15) return 'Legendario';
+    return 'Épico';
   }
 
   /**
-   * Obtiene el ícono de dificultad basado en la cantidad de colores
+   * FIXED: Iconos de dificultad para colores ilimitados
    */
   getDifficultyIcon(): string {
-    const difficultyIcons: { [key: number]: string } = {
-      2: '🟢',
-      3: '🟡',
-      4: '🟠',
-      5: '🔴',
-      6: '🟣'
-    };
+    const colorCount = this.room.colorCount;
     
-    return difficultyIcons[this.room.colorCount] || '⚪';
+    if (colorCount <= 2) return '🟢';
+    if (colorCount <= 3) return '🟡';
+    if (colorCount <= 4) return '🟠';
+    if (colorCount <= 6) return '🔴';
+    if (colorCount <= 8) return '🟣';
+    if (colorCount <= 10) return '⚫';
+    if (colorCount <= 12) return '💀';
+    if (colorCount <= 15) return '👑';
+    return '🔥'; // Para niveles épicos
   }
 
-  /**
-   * Obtiene el texto del botón según el estado de la sala
-   */
   getButtonText(): string {
     if (this.isJoining) {
       return 'Uniéndose...';
@@ -74,17 +110,19 @@ export class RoomCardComponent {
     return 'Unirse';
   }
 
-  /**
-   * Verifica si la sala está disponible para unirse
-   */
   isRoomAvailable(): boolean {
     return this.room.isActive && this.room.currentPlayers < this.room.maxPlayers && !this.isJoining;
   }
 
-  /**
-   * Obtiene el porcentaje de ocupación de la sala
-   */
   getOccupancyPercentage(): number {
     return (this.room.currentPlayers / this.room.maxPlayers) * 100;
+  }
+
+  getColorHex(colorName: string): string {
+    return this.colorNameToHex[colorName] || '#CCCCCC';
+  }
+
+  getColorDisplayName(colorName: string): string {
+    return this.colorDisplayNames[colorName] || colorName;
   }
 }

@@ -49,7 +49,7 @@ export interface UserLoginData {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'https://54edbb588162.ngrok-free.app/api/auth';
+  private apiUrl = 'http://localhost:3333/api/auth';
 
   constructor(
     private http: HttpClient,

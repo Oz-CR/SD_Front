@@ -10,7 +10,7 @@
           Nueva Partida
         </div>
         <h2>Crear Partida</h2>
-        <p class="modal-subtitle">Configura tu partida de Simon Says</p>
+        <p class="modal-subtitle">Configura tu partida de Simon Says - ¡Sin límites!</p>
       </div>
       <button class="close-button" (click)="closeModal()">
         <span>&times;</span>
@@ -22,52 +22,167 @@
       <form class="create-room-form" (ngSubmit)="onSubmit()" #form="ngForm">
         <!-- Campo Nombre de la Partida -->
         <div class="form-group">
-          <label class="form-label" for="gameName">Nombre de la Partida</label>
+          <label class="form-label" for="name">Nombre de la Partida</label>
           <input
             type="text"
-            id="gameName"
-            name="gameName"
+            id="name"
+            name="name"
             class="form-input"
             placeholder="Ingresa el nombre de tu partida"
-            [(ngModel)]="roomData.gameName"
+            [(ngModel)]="roomData.name"
             required
-            #gameNameInput="ngModel"
+            #nameInput="ngModel"
             maxlength="30"
           />
           <div
             class="error-message"
-            *ngIf="gameNameInput.invalid && gameNameInput.touched"
+            *ngIf="nameInput.invalid && nameInput.touched"
           >
             El nombre de la partida es requerido
           </div>
         </div>
 
-        <!-- Campo Cantidad de Colores -->
+        <!-- Selector de Modo -->
         <div class="form-group">
+          <label class="form-label">Configuración de Colores</label>
+          <div class="color-mode-selector">
+            <button 
+              type="button" 
+              class="mode-btn"
+              [class.active]="!isCustomColors"
+              (click)="toggleCustomColors()"
+            >
+              <span class="mode-icon">🔢</span>
+              Cantidad de Colores
+            </button>
+            <button 
+              type="button" 
+              class="mode-btn"
+              [class.active]="isCustomColors"
+              (click)="toggleCustomColors()"
+            >
+              <span class="mode-icon">🎨</span>
+              Colores Personalizados
+            </button>
+          </div>
+        </div>
+
+        <!-- Campo Cantidad de Colores (Modo Rápido) -->
+        <div class="form-group" *ngIf="!isCustomColors">
           <label class="form-label" for="colorCount">Cantidad de Colores</label>
           <input
             type="number"
             id="colorCount"
             name="colorCount"
             class="form-input"
-            placeholder="Cantidad de colores (2 - 6)"
+            placeholder="Cantidad de colores (mínimo 2, sin límite máximo)"
             [(ngModel)]="roomData.colorCount"
             min="2"
-            max="6"
+            [max]="availableColors.length"
             required
             #colorCountInput="ngModel"
           />
           <div
             class="error-message"
-            *ngIf="colorCountInput.touched && (roomData.colorCount < 2 || roomData.colorCount > 6)"
+            *ngIf="colorCountInput.touched && roomData.colorCount! < 2"
           >
-            La cantidad de colores debe estar entre 2 y 6
+            La cantidad de colores debe ser al menos 2
+          </div>
+          <div
+            class="info-message"
+            *ngIf="colorCountInput.valid && roomData.colorCount! >= 2"
+          >
+            ¡Perfecto! Usarás {{ roomData.colorCount }} colores (máximo disponible: {{ availableColors.length }})
+          </div>
+        </div>
+
+        <!-- Selector de Colores Personalizados -->
+        <div class="form-group" *ngIf="isCustomColors">
+          <div class="colors-header">
+            <label class="form-label">Selecciona tus colores ({{ getSelectedColorsCount() }} de {{ availableColors.length }} disponibles)</label>
+            
+            <!-- FIXED: Controles para seleccionar/deseleccionar todos -->
+            <div class="color-controls">
+              <button 
+                type="button" 
+                class="control-btn select-all"
+                (click)="selectAllColors()"
+                [disabled]="areAllColorsSelected()"
+              >
+                <span class="control-icon">✅</span>
+                Todos
+              </button>
+              <button 
+                type="button" 
+                class="control-btn clear-all"
+                (click)="clearAllColors()"
+                [disabled]="getSelectedColorsCount() === 0"
+              >
+                <span class="control-icon">❌</span>
+                Ninguno
+              </button>
+            </div>
+          </div>
+          
+          <!-- Indicador de carga -->
+          <div *ngIf="isLoadingColors" class="loading-colors">
+            <div class="loading-spinner"></div>
+            Cargando colores disponibles...
+          </div>
+          
+          <!-- Grid de colores -->
+          <div class="colors-grid" *ngIf="!isLoadingColors">
+            <div 
+              *ngFor="let color of availableColors; trackBy: trackByColorName" 
+              class="color-option"
+              [class.selected]="isColorSelected(color.name)"
+              (click)="toggleColorSelection(color.name)"
+            >
+              <div 
+                class="color-circle"
+                [style.background-color]="color.hexColor"
+              ></div>
+              <span class="color-name">{{ color.displayName }}</span>
+              <div class="selection-indicator" *ngIf="isColorSelected(color.name)">✓</div>
+            </div>
+          </div>
+          
+          <!-- Mensaje de validación para colores personalizados -->
+          <div 
+            class="error-message" 
+            *ngIf="isCustomColors && getSelectedColorsCount() < 2"
+          >
+            Debes seleccionar al menos 2 colores
+          </div>
+          
+          <div 
+            class="success-message" 
+            *ngIf="isCustomColors && getSelectedColorsCount() >= 2"
+          >
+            <span class="success-icon">🎉</span>
+            ¡Increíble! Has seleccionado {{ getSelectedColorsCount() }} colores. ¡Sin límites!
+          </div>
+
+          <!-- FIXED: Estadísticas de selección -->
+          <div class="selection-stats" *ngIf="isCustomColors && getSelectedColorsCount() > 0">
+            <div class="stat-item">
+              <span class="stat-label">Seleccionados:</span>
+              <span class="stat-value">{{ getSelectedColorsCount() }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Disponibles:</span>
+              <span class="stat-value">{{ availableColors.length }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Progreso:</span>
+              <span class="stat-value">{{ ((getSelectedColorsCount() / availableColors.length) * 100).toFixed(0) }}%</span>
+            </div>
           </div>
         </div>
 
         <!-- Información de Dificultad -->
         <div class="difficulty-info">
-          <div class="info-card">
+          <div class="info-card" [class.extreme]="(isCustomColors ? getSelectedColorsCount() : roomData.colorCount) > 10">
             <div class="info-icon">⚡</div>
             <div class="info-content">
               <h4>Dificultad: {{ getDifficultyLabel() }}</h4>
@@ -81,7 +196,8 @@
           <button type="button" class="btn-secondary" (click)="closeModal()">
             Cancelar
           </button>
-          <button type="submit" class="btn-primary" [disabled]="form.invalid">
+          <button type="submit" class="btn-primary" [disabled]="!isFormValid()">
+            <span class="btn-icon">🚀</span>
             Crear Partida
           </button>
         </div>

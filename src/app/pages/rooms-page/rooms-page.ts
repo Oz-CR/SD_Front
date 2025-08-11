@@ -9,11 +9,6 @@ import { switchMap, startWith, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
 
-interface RoomData {
-  gameName: string;
-  colorCount: number;
-}
-
 interface UserInfo {
   id: number;
   fullName: string;
@@ -232,10 +227,19 @@ export class RoomsPage implements OnInit, OnDestroy {
 
     this.stopPolling();
 
-    localStorage.setItem('current_game', JSON.stringify(room));
+    // FIXED: Asegurar que los colores se mantengan correctamente
+    const gameData = {
+      ...room,
+      selectedColors: room.selectedColors || [],
+      colorCount: room.colorCount || 4
+    };
+
+    console.log('🎨 Guardando datos del juego con colores:', gameData);
+    localStorage.setItem('current_game', JSON.stringify(gameData));
 
     this.router.navigate(['/juego', room.id]);
   }
+
   cancelWaitingRoom(): void {
     if (!this.waitingRoom) return;
 
@@ -284,40 +288,70 @@ export class RoomsPage implements OnInit, OnDestroy {
     });
   }
 
-  onCreateRoom(roomData: RoomData): void {
-    console.log('Nueva partida creada:', roomData);
-
+  onCreateRoom(roomData: CreateRoomData): void {
+    console.log('🎮 Nueva partida solicitada:', roomData);
+    
+    // FIXED: Remover límite máximo de colores, solo validar mínimo
+    if (!roomData.colorCount || roomData.colorCount < 2) {
+      console.error('❌ Cantidad de colores inválida - debe ser al menos 2');
+      this.error = 'La cantidad de colores debe ser al menos 2';
+      return;
+    }
+    
+    // FIXED: Validar que tengamos colores seleccionados
+    let selectedColors = roomData.selectedColors;
+    if (!selectedColors || selectedColors.length === 0) {
+      console.log('⚠️ No hay colores seleccionados, generando colores por defecto...');
+      const availableColors = ['red', 'blue', 'green', 'yellow', 'purple', 'cyan', 'orange', 'pink', 'lime', 'indigo', 'brown', 'gray', 'navy', 'maroon', 'olive', 'teal'];
+      selectedColors = availableColors.slice(0, roomData.colorCount);
+    }
+    
     const createRoomData = {
-      name: roomData.gameName,
-      colorCount: roomData.colorCount,
+      name: roomData.name,
+      colorCount: selectedColors.length, // FIXED: Usar la longitud real de colores seleccionados
+      selectedColors: selectedColors
     };
+
+    console.log('🎨 Creando sala con colores ILIMITADOS:', createRoomData);
+    console.log('🎨 Total de colores a usar:', selectedColors.length);
 
     this.isLoading = true;
     this.error = null;
 
     this.roomService.createRoom(createRoomData).subscribe({
       next: (response) => {
-        console.log('Partida creada exitosamente:', response.data);
+        console.log('✅ Partida creada exitosamente:', response.data);
+        
+        // FIXED: Asegurar que los colores se guarden correctamente
+        const gameDataForStorage = {
+          ...response.data,
+          selectedColors: selectedColors,
+          colorCount: selectedColors.length // FIXED: Usar longitud real
+        };
+        
+        console.log('🎨 Guardando en localStorage (UNLIMITED):', gameDataForStorage);
+        localStorage.setItem('current_game', JSON.stringify(gameDataForStorage));
+        
         this.rooms.unshift(response.data);
         this.isLoading = false;
 
         this.isWaitingForPlayer = true;
         this.waitingRoom = response.data;
         
-        // Reiniciar polling con intervalo más frecuente
         this.restartPolling();
-
         this.closeModal();
 
-        console.log('✅ Partida creada y estado de espera activado:', {
+        console.log('✅ Partida creada con colores ilimitados:', {
           isWaitingForPlayer: this.isWaitingForPlayer,
           waitingRoom: this.waitingRoom,
+          totalColors: selectedColors.length,
+          colorsInStorage: gameDataForStorage.selectedColors
         });
 
         console.log(response.message);
       },
       error: (error) => {
-        console.error('Error al crear partida:', error);
+        console.error('❌ Error al crear partida:', error);
         this.error =
           error.error?.message ||
           'Error al crear la partida. Intenta nuevamente.';
@@ -344,15 +378,40 @@ export class RoomsPage implements OnInit, OnDestroy {
     this.joiningRoom = room;
     this.error = null;
 
-    console.log('Intentando unirse a la sala:', room.id);
+    console.log('🎮 Player 2 attempting to join room:', room);
+    console.log('🎨 Room colors available:', room.selectedColors);
 
     this.roomService.joinGame(room.id).subscribe({
       next: (response) => {
-        console.log('✅ Unión exitosa:', response.data);
+        console.log('✅ Join successful, response:', response.data);
 
         this.stopPolling();
 
-        localStorage.setItem('current_game', JSON.stringify(response.data));
+        // FIXED: Asegurar que el jugador 2 reciba EXACTAMENTE los mismos colores
+        const gameDataForPlayer2 = {
+          id: response.data.id || room.id,
+          name: response.data.name || room.name,
+          colorCount: room.colorCount, // FIXED: Usar datos de la room original
+          selectedColors: room.selectedColors || [], // FIXED: Usar colores de la room original
+          player1Id: response.data.player1Id || room.player1Id,
+          player2Id: response.data.player2Id,
+          currentPlayers: response.data.currentPlayers || room.currentPlayers,
+          maxPlayers: response.data.maxPlayers || room.maxPlayers,
+          status: response.data.status || room.status,
+          host: response.data.host || room.host,
+          isActive: response.data.isActive !== undefined ? response.data.isActive : room.isActive,
+          createdAt: response.data.createdAt || room.createdAt
+        };
+
+        console.log('🎨 CRITICAL - Player 2 game data with colors:', gameDataForPlayer2);
+        console.log('🎨 CRITICAL - Specific colors for player 2:', gameDataForPlayer2.selectedColors);
+
+        localStorage.setItem('current_game', JSON.stringify(gameDataForPlayer2));
+
+        // FIXED: Verificar que se guardó correctamente
+        const savedData = JSON.parse(localStorage.getItem('current_game') || '{}');
+        console.log('🎨 VERIFICATION - Data saved to localStorage:', savedData);
+        console.log('🎨 VERIFICATION - Colors in saved data:', savedData.selectedColors);
 
         this.router.navigate(['/juego', room.id]);
       },

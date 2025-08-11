@@ -8,6 +8,7 @@ export interface Room {
   name: string;
   host: string;
   colorCount: number;
+  selectedColors?: string[] | null;
   currentPlayers: number;
   maxPlayers: number;
   isActive: boolean;
@@ -17,9 +18,21 @@ export interface Room {
   status: 'waiting' | 'playing' | 'finished';
 }
 
+export interface ColorOption {
+  name: string;
+  displayName: string;
+  hexColor: string;
+}
+
 export interface CreateRoomData {
   name: string;
   colorCount: number;
+  selectedColors: string[];
+}
+
+export interface ColorsResponse {
+  message: string;
+  data: ColorOption[];
 }
 
 export interface RoomResponse {
@@ -41,7 +54,7 @@ export interface JoinRoomResponse {
   providedIn: 'root',
 })
 export class RoomService {
-  private apiUrl = 'https://54edbb588162.ngrok-free.app';
+  private apiUrl = 'http://localhost:3333';
 
   constructor(
     private http: HttpClient,
@@ -53,9 +66,16 @@ export class RoomService {
    */
   getAvailableRooms(): Observable<RoomResponse> {
     const headers = this.getHeaders();
-    return this.http.get<RoomResponse>(`${this.apiUrl}/partidas/disponibilad`, {
+    return this.http.get<RoomResponse>(`${this.apiUrl}/partidas/disponibles`, {
       headers,
     });
+  }
+
+  /**
+   * Obtiene los colores válidos para el juego
+   */
+  getValidColors(): Observable<ColorsResponse> {
+    return this.http.get<ColorsResponse>(`${this.apiUrl}/colors/valid`);
   }
 
   /**
@@ -106,7 +126,7 @@ export class RoomService {
    */
   getCurrentUserId(): number | null {
     if (isPlatformBrowser(this.platformId)) {
-      const token = localStorage.getItem('auth_token');
+      const token = localStorage.getItem('token');
       if (token) {
         try {
           const payload = JSON.parse(atob(token.split('.')[1]));
@@ -167,5 +187,4 @@ export class RoomService {
       headers,
     });
   }
-
 }

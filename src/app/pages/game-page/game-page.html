@@ -44,12 +44,14 @@
         <div class="simon-circle floating">
           <div 
             class="simon-segment" 
-            *ngFor="let i of getSegmentNumbers()" 
-            [class]="'segment-' + (i + 1)"
-            [class.active]="activeSegment === i"
+            *ngFor="let colorName of getSegmentNumbers(); let i = index" 
+            [class.active]="activeSegment === colorName"
             [class.disabled]="!isPlayerTurn"
-            (click)="handleUserInput(i)"
-          ></div>
+            [ngStyle]="getSegmentStyles(colorName, i)"
+            (click)="handleUserInput(colorName)"
+          >
+            <span class="segment-label">{{ colorName }}</span>
+          </div>
           <div class="simon-center">
             <div class="center-subtitle">Simon Says!</div>
           </div>
