@@ -49,7 +49,8 @@ export interface UserLoginData {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'https://cute-moments-hang.loca.lt/api/auth';
+  private apiUrl =
+    'https://a4d266695ce9b5c962c65a1b23fcc8e6.serveo.net/api/auth';
 
   constructor(
     private http: HttpClient,

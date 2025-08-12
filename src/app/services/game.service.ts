@@ -41,16 +41,16 @@ export interface Color {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GameService {
-  private apiUrl = 'http://localhost:3333/api';
+  private apiUrl = 'https://a4d266695ce9b5c962c65a1b23fcc8e6.serveo.net/api';
   private gameStateSubject = new BehaviorSubject<GameState | null>(null);
   public gameState$ = this.gameStateSubject.asObservable();
-  
+
   private sequenceSubject = new BehaviorSubject<string[]>([]);
   public sequence$ = this.sequenceSubject.asObservable();
-  
+
   private showingSequenceSubject = new BehaviorSubject<boolean>(false);
   public showingSequence$ = this.showingSequenceSubject.asObservable();
 
@@ -59,8 +59,8 @@ export class GameService {
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
     return new HttpHeaders({
-      'Authorization': token ? `Bearer ${token}` : '',
-      'Content-Type': 'application/json'
+      Authorization: token ? `Bearer ${token}` : '',
+      'Content-Type': 'application/json',
     });
   }
 
@@ -69,16 +69,19 @@ export class GameService {
    */
   getGameState(roomId: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/game/${roomId}/state`, {
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
     });
   }
 
   /**
    * Actualiza el estado del juego
    */
-  updateGameState(roomId: string, gameState: Partial<GameState>): Observable<any> {
+  updateGameState(
+    roomId: string,
+    gameState: Partial<GameState>
+  ): Observable<any> {
     return this.http.post(`${this.apiUrl}/game/${roomId}/update`, gameState, {
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
     });
   }
 
@@ -87,7 +90,7 @@ export class GameService {
    */
   makeMove(roomId: string, move: GameMove): Observable<any> {
     return this.http.post(`${this.apiUrl}/game/${roomId}/move`, move, {
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
     });
   }
 
@@ -97,7 +100,7 @@ export class GameService {
   getAvailableColors(count?: number): Observable<any> {
     const params = count ? `?count=${count}` : '';
     return this.http.get(`${this.apiUrl}/colors/valid${params}`, {
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
     });
   }
 
@@ -105,9 +108,13 @@ export class GameService {
    * Genera colores específicos para una sala
    */
   generateColorsForRoom(colorCount: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/colors/generate`, { colorCount }, {
-      headers: this.getHeaders()
-    });
+    return this.http.post(
+      `${this.apiUrl}/colors/generate`,
+      { colorCount },
+      {
+        headers: this.getHeaders(),
+      }
+    );
   }
 
   /**
@@ -138,83 +145,117 @@ export class GameService {
   getColorObjects(colorNames: string[]): Color[] {
     const colorMap: { [key: string]: Color } = {
       // Colores básicos
-      'red': { name: 'red', displayName: 'Rojo', hexColor: '#FF4444' },
-      'blue': { name: 'blue', displayName: 'Azul', hexColor: '#4444FF' },
-      'green': { name: 'green', displayName: 'Verde', hexColor: '#44FF44' },
-      'yellow': { name: 'yellow', displayName: 'Amarillo', hexColor: '#FFFF44' },
-      'orange': { name: 'orange', displayName: 'Naranja', hexColor: '#FF8800' },
-      'purple': { name: 'purple', displayName: 'Morado', hexColor: '#FF44FF' },
-      'pink': { name: 'pink', displayName: 'Rosa', hexColor: '#FF88BB' },
-      'cyan': { name: 'cyan', displayName: 'Cian', hexColor: '#44FFFF' },
-      'lime': { name: 'lime', displayName: 'Lima', hexColor: '#88FF44' },
-      'indigo': { name: 'indigo', displayName: 'Índigo', hexColor: '#4444AA' },
-      
+      red: { name: 'red', displayName: 'Rojo', hexColor: '#FF4444' },
+      blue: { name: 'blue', displayName: 'Azul', hexColor: '#4444FF' },
+      green: { name: 'green', displayName: 'Verde', hexColor: '#44FF44' },
+      yellow: { name: 'yellow', displayName: 'Amarillo', hexColor: '#FFFF44' },
+      orange: { name: 'orange', displayName: 'Naranja', hexColor: '#FF8800' },
+      purple: { name: 'purple', displayName: 'Morado', hexColor: '#FF44FF' },
+      pink: { name: 'pink', displayName: 'Rosa', hexColor: '#FF88BB' },
+      cyan: { name: 'cyan', displayName: 'Cian', hexColor: '#44FFFF' },
+      lime: { name: 'lime', displayName: 'Lima', hexColor: '#88FF44' },
+      indigo: { name: 'indigo', displayName: 'Índigo', hexColor: '#4444AA' },
+
       // Colores extendidos - AMPLIADOS SIN LÍMITE
-      'crimson': { name: 'crimson', displayName: 'Carmesí', hexColor: '#DC143C' },
-      'navy': { name: 'navy', displayName: 'Azul Marino', hexColor: '#000080' },
-      'teal': { name: 'teal', displayName: 'Azul Verdoso', hexColor: '#008080' },
-      'gold': { name: 'gold', displayName: 'Dorado', hexColor: '#FFD700' },
-      'coral': { name: 'coral', displayName: 'Coral', hexColor: '#FF7F50' },
-      'violet': { name: 'violet', displayName: 'Violeta', hexColor: '#8A2BE2' },
-      'salmon': { name: 'salmon', displayName: 'Salmón', hexColor: '#FA8072' },
-      'turquoise': { name: 'turquoise', displayName: 'Turquesa', hexColor: '#40E0D0' },
-      'khaki': { name: 'khaki', displayName: 'Caqui', hexColor: '#F0E68C' },
-      'plum': { name: 'plum', displayName: 'Ciruela', hexColor: '#DDA0DD' },
-      'maroon': { name: 'maroon', displayName: 'Granate', hexColor: '#800000' },
-      'olive': { name: 'olive', displayName: 'Oliva', hexColor: '#808000' },
-      'silver': { name: 'silver', displayName: 'Plateado', hexColor: '#C0C0C0' },
-      'chocolate': { name: 'chocolate', displayName: 'Chocolate', hexColor: '#D2691E' },
-      'tomato': { name: 'tomato', displayName: 'Tomate', hexColor: '#FF6347' },
-      'orchid': { name: 'orchid', displayName: 'Orquídea', hexColor: '#DA70D6' },
-      'lightblue': { name: 'lightblue', displayName: 'Azul Claro', hexColor: '#ADD8E6' },
-      'darkgreen': { name: 'darkgreen', displayName: 'Verde Oscuro', hexColor: '#006400' },
-      'orange-red': { name: 'orange-red', displayName: 'Naranja Rojizo', hexColor: '#FF4500' },
-      'medium-purple': { name: 'medium-purple', displayName: 'Morado Medio', hexColor: '#9370DB' }
+      crimson: { name: 'crimson', displayName: 'Carmesí', hexColor: '#DC143C' },
+      navy: { name: 'navy', displayName: 'Azul Marino', hexColor: '#000080' },
+      teal: { name: 'teal', displayName: 'Azul Verdoso', hexColor: '#008080' },
+      gold: { name: 'gold', displayName: 'Dorado', hexColor: '#FFD700' },
+      coral: { name: 'coral', displayName: 'Coral', hexColor: '#FF7F50' },
+      violet: { name: 'violet', displayName: 'Violeta', hexColor: '#8A2BE2' },
+      salmon: { name: 'salmon', displayName: 'Salmón', hexColor: '#FA8072' },
+      turquoise: {
+        name: 'turquoise',
+        displayName: 'Turquesa',
+        hexColor: '#40E0D0',
+      },
+      khaki: { name: 'khaki', displayName: 'Caqui', hexColor: '#F0E68C' },
+      plum: { name: 'plum', displayName: 'Ciruela', hexColor: '#DDA0DD' },
+      maroon: { name: 'maroon', displayName: 'Granate', hexColor: '#800000' },
+      olive: { name: 'olive', displayName: 'Oliva', hexColor: '#808000' },
+      silver: { name: 'silver', displayName: 'Plateado', hexColor: '#C0C0C0' },
+      chocolate: {
+        name: 'chocolate',
+        displayName: 'Chocolate',
+        hexColor: '#D2691E',
+      },
+      tomato: { name: 'tomato', displayName: 'Tomate', hexColor: '#FF6347' },
+      orchid: { name: 'orchid', displayName: 'Orquídea', hexColor: '#DA70D6' },
+      lightblue: {
+        name: 'lightblue',
+        displayName: 'Azul Claro',
+        hexColor: '#ADD8E6',
+      },
+      darkgreen: {
+        name: 'darkgreen',
+        displayName: 'Verde Oscuro',
+        hexColor: '#006400',
+      },
+      'orange-red': {
+        name: 'orange-red',
+        displayName: 'Naranja Rojizo',
+        hexColor: '#FF4500',
+      },
+      'medium-purple': {
+        name: 'medium-purple',
+        displayName: 'Morado Medio',
+        hexColor: '#9370DB',
+      },
     };
 
     console.log('🎨 [GameService] Procesando colores:', {
       input: colorNames,
-      totalCount: colorNames.length
+      totalCount: colorNames.length,
     });
 
     return colorNames.map((colorName, index) => {
       // Si el color está en el mapa predefinido
       if (colorMap[colorName]) {
-        console.log(`✅ [GameService] Color predefinido encontrado: ${colorName}`);
+        console.log(
+          `✅ [GameService] Color predefinido encontrado: ${colorName}`
+        );
         return colorMap[colorName];
-      } 
-      
+      }
+
       // Si es un color hexadecimal (empieza con #) - LÓGICA MEJORADA
       else if (this.isValidHexColor(colorName)) {
         const colorObj = {
           name: colorName,
           displayName: this.getColorDisplayName(colorName, index + 1),
-          hexColor: colorName.toUpperCase()
+          hexColor: colorName.toUpperCase(),
         };
-        console.log(`🎨 [GameService] Color hexadecimal personalizado: ${colorName} -> ${colorObj.displayName}`);
+        console.log(
+          `🎨 [GameService] Color hexadecimal personalizado: ${colorName} -> ${colorObj.displayName}`
+        );
         return colorObj;
-      } 
-      
+      }
+
       // Si empieza con 'color' (colores dinámicos numerados)
       else if (colorName.startsWith('color')) {
         const colorNumber = colorName.replace('color', '');
         const colorObj = {
           name: colorName,
           displayName: `Color ${colorNumber}`,
-          hexColor: this.generateRandomHexColor()
+          hexColor: this.generateRandomHexColor(),
         };
-        console.log(`🎲 [GameService] Color dinámico generado: ${colorName} -> ${colorObj.hexColor}`);
+        console.log(
+          `🎲 [GameService] Color dinámico generado: ${colorName} -> ${colorObj.hexColor}`
+        );
         return colorObj;
-      } 
-      
+      }
+
       // Color desconocido - generar uno aleatorio pero con nombre descriptivo
       else {
         const colorObj = {
           name: colorName,
           displayName: this.getColorDisplayName(colorName, index + 1),
-          hexColor: this.isValidHexColor(colorName) ? colorName : this.generateRandomHexColor()
+          hexColor: this.isValidHexColor(colorName)
+            ? colorName
+            : this.generateRandomHexColor(),
         };
-        console.log(`❓ [GameService] Color desconocido procesado: ${colorName} -> ${colorObj.displayName}`);
+        console.log(
+          `❓ [GameService] Color desconocido procesado: ${colorName} -> ${colorObj.displayName}`
+        );
         return colorObj;
       }
     });
@@ -223,17 +264,25 @@ export class GameService {
   /**
    * Genera un nombre descriptivo para un color
    */
-  private getColorDisplayName(colorName: string, fallbackIndex: number): string {
+  private getColorDisplayName(
+    colorName: string,
+    fallbackIndex: number
+  ): string {
     // Si es un color hexadecimal, generar un nombre descriptivo
     if (this.isValidHexColor(colorName)) {
-      return this.generateColorNameFromHex(colorName) || `Color ${fallbackIndex}`;
+      return (
+        this.generateColorNameFromHex(colorName) || `Color ${fallbackIndex}`
+      );
     }
-    
+
     // Si es un nombre, capitalizarlo
     if (typeof colorName === 'string' && colorName.length > 0) {
-      return colorName.charAt(0).toUpperCase() + colorName.slice(1).replace(/[-_]/g, ' ');
+      return (
+        colorName.charAt(0).toUpperCase() +
+        colorName.slice(1).replace(/[-_]/g, ' ')
+      );
     }
-    
+
     return `Color ${fallbackIndex}`;
   }
 
@@ -245,7 +294,7 @@ export class GameService {
     const r = parseInt(hex.substr(0, 2), 16);
     const g = parseInt(hex.substr(2, 2), 16);
     const b = parseInt(hex.substr(4, 2), 16);
-    
+
     // Determinar el color dominante
     if (r > g && r > b) {
       if (r > 200) return 'Rojo Claro';
@@ -270,7 +319,7 @@ export class GameService {
     } else if (g === b) {
       return 'Cian';
     }
-    
+
     return 'Personalizado';
   }
 

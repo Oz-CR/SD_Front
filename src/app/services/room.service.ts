@@ -43,7 +43,7 @@ export interface JoinRoomResponse {
   providedIn: 'root',
 })
 export class RoomService {
-  private apiUrl = 'https://cute-moments-hang.loca.lt';
+  private apiUrl = 'https://a4d266695ce9b5c962c65a1b23fcc8e6.serveo.net';
 
   constructor(
     private http: HttpClient,
