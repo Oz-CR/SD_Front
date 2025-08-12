@@ -151,6 +151,84 @@
   margin: 0;
 }
 
+/* Last Color Indicator */
+.last-color-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.indicator-label {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  text-align: center;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.last-color-display {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.pulse-effect {
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border-radius: 19px;
+  background: transparent;
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  animation: pulse-ring 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 255, 255, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 1), 0 0 60px rgba(255, 255, 255, 0.6);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 255, 255, 0.4);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.95);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(1.2);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
 /* Scores */
 .scores-container {
   display: flex;
@@ -251,49 +329,177 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Grid responsive based on color count */
+/* Grid responsive basado en la cantidad de colores - MEJORADO PARA CUALQUIER CANTIDAD */
+.color-grid {
+  /* Configuración dinámica que se adapta a CUALQUIER cantidad de colores */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(95px, 110px));
+  gap: 15px;
+  justify-content: center;
+  margin: 0 auto 30px auto;
+  padding: 20px;
+  max-width: 95%;
+  width: 100%;
+}
+
+/* Ajustes específicos para cantidades pequeñas - MÁS GRANDES */
 .color-grid[data-color-count="2"] {
-  grid-template-columns: repeat(2, 120px);
+  grid-template-columns: repeat(2, 130px);
+  max-width: 300px;
 }
 
 .color-grid[data-color-count="3"] {
-  grid-template-columns: repeat(3, 120px);
+  grid-template-columns: repeat(3, 125px);
+  max-width: 420px;
 }
 
 .color-grid[data-color-count="4"] {
-  grid-template-columns: repeat(2, 120px);
+  grid-template-columns: repeat(2, 125px);
+  max-width: 300px;
 }
 
 .color-grid[data-color-count="5"],
 .color-grid[data-color-count="6"] {
   grid-template-columns: repeat(3, 120px);
+  max-width: 420px;
 }
 
 .color-grid[data-color-count="7"],
-.color-grid[data-color-count="8"] {
-  grid-template-columns: repeat(4, 120px);
-}
-
+.color-grid[data-color-count="8"],
 .color-grid[data-color-count="9"] {
-  grid-template-columns: repeat(3, 120px);
+  grid-template-columns: repeat(3, 115px);
+  max-width: 420px;
 }
 
+/* Para cantidades medias de colores (10-16) */
+.color-grid[data-color-count="10"],
+.color-grid[data-color-count="11"],
+.color-grid[data-color-count="12"] {
+  grid-template-columns: repeat(4, 110px);
+  max-width: 500px;
+}
+
+.color-grid[data-color-count="13"],
+.color-grid[data-color-count="14"],
+.color-grid[data-color-count="15"],
+.color-grid[data-color-count="16"] {
+  grid-template-columns: repeat(4, 105px);
+  max-width: 480px;
+}
+
+/* Para cantidades grandes de colores (17-24) */
+.color-grid[data-color-count="17"],
+.color-grid[data-color-count="18"],
+.color-grid[data-color-count="19"],
+.color-grid[data-color-count="20"] {
+  grid-template-columns: repeat(5, 100px);
+  max-width: 580px;
+}
+
+.color-grid[data-color-count="21"],
+.color-grid[data-color-count="22"],
+.color-grid[data-color-count="23"],
+.color-grid[data-color-count="24"] {
+  grid-template-columns: repeat(6, 95px);
+  max-width: 640px;
+}
+
+/* Para cantidades muy grandes (25-35) */
+.color-grid[data-color-count="25"],
+.color-grid[data-color-count="26"],
+.color-grid[data-color-count="27"],
+.color-grid[data-color-count="28"],
+.color-grid[data-color-count="29"],
+.color-grid[data-color-count="30"] {
+  grid-template-columns: repeat(6, 90px);
+  max-width: 620px;
+}
+
+.color-grid[data-color-count="31"],
+.color-grid[data-color-count="32"],
+.color-grid[data-color-count="33"],
+.color-grid[data-color-count="34"],
+.color-grid[data-color-count="35"] {
+  grid-template-columns: repeat(7, 85px);
+  max-width: 680px;
+}
+
+/* Para cantidades extremas (36+) - AUTO-FIT DINÁMICO */
 .color-grid {
-  grid-template-columns: repeat(auto-fit, minmax(100px, 120px));
-  max-width: 800px;
-  margin: 0 auto 30px auto;
+  /* Fallback por defecto que funciona para CUALQUIER cantidad */
+  grid-template-columns: repeat(auto-fit, minmax(80px, 95px));
+  max-width: 95%;
 }
 
 .color-button {
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 100%;
+  height: 110px;
+  min-width: 80px;
+  min-height: 80px;
   border-radius: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
   overflow: hidden;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
   border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Ajustes específicos por cantidad de colores - MÁS GRADUAL */
+.color-grid[data-color-count="2"] .color-button,
+.color-grid[data-color-count="3"] .color-button,
+.color-grid[data-color-count="4"] .color-button {
+  height: 130px;
+  min-height: 120px;
+}
+
+.color-grid[data-color-count="5"] .color-button,
+.color-grid[data-color-count="6"] .color-button,
+.color-grid[data-color-count="7"] .color-button,
+.color-grid[data-color-count="8"] .color-button,
+.color-grid[data-color-count="9"] .color-button {
+  height: 120px;
+  min-height: 110px;
+}
+
+.color-grid[data-color-count="10"] .color-button,
+.color-grid[data-color-count="11"] .color-button,
+.color-grid[data-color-count="12"] .color-button,
+.color-grid[data-color-count="13"] .color-button,
+.color-grid[data-color-count="14"] .color-button,
+.color-grid[data-color-count="15"] .color-button,
+.color-grid[data-color-count="16"] .color-button {
+  height: 110px;
+  min-height: 100px;
+}
+
+.color-grid[data-color-count="17"] .color-button,
+.color-grid[data-color-count="18"] .color-button,
+.color-grid[data-color-count="19"] .color-button,
+.color-grid[data-color-count="20"] .color-button,
+.color-grid[data-color-count="21"] .color-button,
+.color-grid[data-color-count="22"] .color-button,
+.color-grid[data-color-count="23"] .color-button,
+.color-grid[data-color-count="24"] .color-button {
+  height: 100px;
+  min-height: 90px;
+}
+
+.color-grid[data-color-count="25"] .color-button,
+.color-grid[data-color-count="26"] .color-button,
+.color-grid[data-color-count="27"] .color-button,
+.color-grid[data-color-count="28"] .color-button,
+.color-grid[data-color-count="29"] .color-button,
+.color-grid[data-color-count="30"] .color-button {
+  height: 90px;
+  min-height: 80px;
+}
+
+/* Para cantidades extremas (31+) - botones más compactos */
+.color-grid .color-button {
+  /* Fallback para cualquier cantidad muy grande */
+  height: 85px;
+  min-height: 75px;
 }
 
 .color-button:hover:not(.disabled) {
@@ -517,6 +723,19 @@
     width: 40px;
     height: 40px;
     font-size: 0.8rem;
+  }
+  
+  .last-color-indicator {
+    padding: 15px;
+  }
+  
+  .indicator-label {
+    font-size: 1rem;
+  }
+  
+  .last-color-display {
+    width: 70px;
+    height: 70px;
   }
 }
 

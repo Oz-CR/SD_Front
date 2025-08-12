@@ -8,18 +8,20 @@ export interface Room {
   name: string;
   host: string;
   colorCount: number;
+  selectedColors?: string[];
   currentPlayers: number;
   maxPlayers: number;
   isActive: boolean;
   createdAt: string;
   player1Id: number;
   player2Id: number | null;
-  status: 'waiting' | 'playing' | 'finished';
+  status: 'waiting' | 'playing' | 'finished' | 'in_progress' | 'active';
 }
 
 export interface CreateRoomData {
   name: string;
   colorCount: number;
+  selectedColors?: string[];
 }
 
 export interface RoomResponse {

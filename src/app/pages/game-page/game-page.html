@@ -21,9 +21,6 @@
         <h1 class="game-title">{{ roomName }}</h1>
         <div class="game-details">
           <span class="detail-item">
-            <strong>Colores:</strong> {{ colorCount }}
-          </span>
-          <span class="detail-item">
             <strong>Ronda:</strong> {{ gameState?.currentRound || 0 }}
           </span>
         </div>
@@ -46,6 +43,17 @@
       <h2 class="status-text">{{ getGameStatusText() }}</h2>
     </div>
 
+    <!-- Last Color Added Indicator -->
+    <div *ngIf="gameStarted && currentSequence.length > 0" class="last-color-indicator">
+      <div class="indicator-label">Último color agregado:</div>
+      <div class="last-color-display" [ngStyle]="getLastColorStyle()">
+        <div class="pulse-effect"></div>
+      </div>
+      <div style="color: white; font-size: 10px; margin-top: 5px;">
+        Debug: gameStarted={{gameStarted}} | sequence={{currentSequence.length}} | isPlayerTurn={{isPlayerTurn}}
+      </div>
+    </div>
+
     <!-- Scores -->
     <div *ngIf="gameStarted" class="scores-container">
       <div class="score-card">
@@ -59,14 +67,6 @@
       </div>
     </div>
 
-    <!-- Start Game Button -->
-    <div *ngIf="!gameStarted && gameState?.status === 'waiting'" class="start-container">
-      <button class="btn-start" (click)="startGame()">
-        <span class="start-icon">🚀</span>
-        Iniciar Juego
-      </button>
-      <p class="start-hint">Ambos jugadores deben estar presentes para comenzar</p>
-    </div>
 
     <!-- Color Grid -->
     <div *ngIf="availableColors.length > 0" class="color-grid" [attr.data-color-count]="availableColors.length">
@@ -75,30 +75,16 @@
         class="color-button"
         [id]="'color-' + color.name"
         [ngStyle]="getColorStyle(color)"
-        [class.disabled]="!isPlayerTurn || showingSequence || !waitingForPlayer"
+        [class.disabled]="!isPlayerTurn || showingSequence"
         (click)="onColorClick(color)"
       >
         <div class="color-content">
-          <div class="color-name">{{ color.displayName }}</div>
+          <!-- Nombres de colores removidos según solicitud -->
         </div>
         <div class="color-overlay"></div>
       </div>
     </div>
 
-    <!-- Current Sequence Display -->
-    <div *ngIf="currentSequence.length > 0 && gameStarted" class="sequence-display">
-      <h3>Secuencia Actual</h3>
-      <div class="sequence-colors">
-        <div 
-          *ngFor="let colorName of currentSequence; let i = index"
-          class="sequence-color"
-          [ngStyle]="{'background-color': getColorByName(colorName)?.hexColor}"
-          [attr.title]="getColorByName(colorName)?.displayName"
-        >
-          {{ i + 1 }}
-        </div>
-      </div>
-    </div>
 
     <!-- Player Progress -->
     <div *ngIf="waitingForPlayer && playerSequence.length > 0" class="progress-container">
