@@ -43,7 +43,7 @@ export interface JoinRoomResponse {
   providedIn: 'root',
 })
 export class RoomService {
-  private apiUrl = 'https://54edbb588162.ngrok-free.app';
+  private apiUrl = 'https://cute-moments-hang.loca.lt';
 
   constructor(
     private http: HttpClient,
@@ -55,9 +55,12 @@ export class RoomService {
    */
   getAvailableRooms(): Observable<RoomResponse> {
     const headers = this.getHeaders();
-    return this.http.get<RoomResponse>(`${this.apiUrl}/api/partidas/disponibles`, {
-      headers,
-    });
+    return this.http.get<RoomResponse>(
+      `${this.apiUrl}/api/partidas/disponibles`,
+      {
+        headers,
+      }
+    );
   }
 
   /**
