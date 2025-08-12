@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CreateRoomModalComponent } from '../../components/create-room-modal/create-room-modal';
 import { RoomCardComponent } from '../../components/room-card/room-card';
 import { RoomService, Room, CreateRoomData } from '../../services/room.service';
+import { GameService, Color } from '../../services/game.service';
 import { AuthService } from '../../services/auth.service';
 import { interval, Subscription } from 'rxjs';
 import { switchMap, startWith, catchError } from 'rxjs/operators';
@@ -12,6 +13,8 @@ import { Router } from '@angular/router';
 interface RoomData {
   gameName: string;
   colorCount: number;
+  selectedColors: string[];
+  customColors: Color[];
 }
 
 interface UserInfo {
@@ -32,7 +35,7 @@ export class RoomsPage implements OnInit, OnDestroy {
   isLoading = false;
   error: string | null = null;
   private pollingSubscription: Subscription | null = null;
-  private readonly POLLING_INTERVAL = 5000; // 5 segundos
+  private readonly POLLING_INTERVAL = 2000; // 2 segundos para debug
 
   // Estados para el jugador
   currentUser: UserInfo | null = null;
@@ -40,6 +43,9 @@ export class RoomsPage implements OnInit, OnDestroy {
   waitingRoom: Room | null = null;
   joiningRoom: Room | null = null;
   isJoiningRoom = false;
+  
+  // Para detectar partidas desaparecidas
+  private previousRoomIds: string[] = [];
 
   constructor(
     private roomService: RoomService,
@@ -204,6 +210,7 @@ export class RoomsPage implements OnInit, OnDestroy {
         player1Id: r.player1Id,
         player2Id: r.player2Id,
         status: r.status,
+        currentPlayers: r.currentPlayers,
       }))
     );
 
@@ -229,6 +236,80 @@ export class RoomsPage implements OnInit, OnDestroy {
 
       return isPlayer1 && isWaiting && hasOnlyOnePlayer;
     });
+
+    // Buscar si el usuario está en una partida que ahora está lista para jugar
+    const gameReadyRoom = this.rooms.find((room) => {
+      const roomPlayer1Id = String(room.player1Id);
+      const roomPlayer2Id = String(room.player2Id || '');
+      const currentUserId = String(this.currentUser!.id);
+
+      const isPlayer1 = roomPlayer1Id === currentUserId;
+      const isPlayer2 = roomPlayer2Id === currentUserId;
+      
+      // Más estados posibles para juego listo
+      const isInGame = room.status === 'in_progress' || 
+                      room.status === 'active' || 
+                      room.status === 'playing' || 
+                      (room.status === 'waiting' && room.currentPlayers === 2);
+      const hasTwoPlayers = room.currentPlayers === 2;
+
+      console.log(`🔍 Verificando si sala ${room.id} está lista:`, {
+        roomId: room.id,
+        player1Id: room.player1Id,
+        player2Id: room.player2Id,
+        currentUserId: this.currentUser!.id,
+        isPlayer1,
+        isPlayer2,
+        status: room.status,
+        currentPlayers: room.currentPlayers,
+        isInGame,
+        hasTwoPlayers,
+        readyToPlay: (isPlayer1 || isPlayer2) && isInGame && hasTwoPlayers
+      });
+
+      return (isPlayer1 || isPlayer2) && isInGame && hasTwoPlayers;
+    });
+
+    // Detectar si la partida en espera desapareció (significa que se llenó)
+    if (this.isWaitingForPlayer && this.waitingRoom) {
+      const waitingRoomStillExists = this.rooms.some(room => room.id === this.waitingRoom!.id);
+      
+      if (!waitingRoomStillExists) {
+        console.log('🚀 Partida se llenó! Redirigiendo al juego...');
+        
+        const roomId = this.waitingRoom.id;
+        this.isWaitingForPlayer = false;
+        this.waitingRoom = null;
+        this.stopPolling();
+
+        // Guardar datos del juego
+        localStorage.setItem('current_game', JSON.stringify({
+          id: roomId,
+          status: 'playing',
+          currentPlayers: 2
+        }));
+
+        // Redirigir al juego SIN POPUP
+        this.router.navigate(['/juego', roomId]);
+        return;
+      }
+    }
+
+    // Si encontramos una partida lista para jugar, redirigir inmediatamente
+    if (gameReadyRoom) {
+      console.log('🎮 Partida lista para jugar, redirigiendo...:', gameReadyRoom);
+      
+      this.isWaitingForPlayer = false;
+      this.waitingRoom = null;
+      this.stopPolling();
+
+      // Guardar datos del juego
+      localStorage.setItem('current_game', JSON.stringify(gameReadyRoom));
+
+      // Redirigir al juego SIN POPUP
+      this.router.navigate(['/juego', gameReadyRoom.id]);
+      return;
+    }
 
     if (waitingRoom) {
       // Solo activar la landing si no estamos uniéndonos a otra partida
@@ -264,21 +345,45 @@ export class RoomsPage implements OnInit, OnDestroy {
 
   /**
    * Maneja la creación de una nueva partida
+   * MEJORADO: Procesamiento robusto de colores
    */
   onCreateRoom(roomData: RoomData): void {
-    console.log('Nueva partida creada:', roomData);
-
-    const createRoomData = {
+    console.log('🎮 Nueva partida solicitada:', roomData);
+    
+    // Validar y procesar colores
+    const processedColors = roomData.selectedColors?.length > 0 
+      ? roomData.selectedColors 
+      : [];
+    
+    const createRoomData: CreateRoomData = {
       name: roomData.gameName,
       colorCount: roomData.colorCount,
+      selectedColors: processedColors,
     };
+
+    console.log('📤 [CreateRoom] Datos finales a enviar al backend:', {
+      name: createRoomData.name,
+      colorCount: createRoomData.colorCount,
+      selectedColorsCount: createRoomData.selectedColors?.length || 0,
+      selectedColors: createRoomData.selectedColors,
+      originalRoomData: roomData
+    });
 
     this.isLoading = true;
     this.error = null;
 
     this.roomService.createRoom(createRoomData).subscribe({
       next: (response) => {
-        console.log('Partida creada exitosamente:', response.data);
+        console.log('✅ Partida creada exitosamente:', response.data);
+        
+        // Verificar qué colores recibió el backend
+        console.log('🎨 Colores confirmados por el backend:', {
+          receivedColorCount: response.data.colorCount,
+          receivedSelectedColors: response.data.selectedColors,
+          sentColorCount: createRoomData.colorCount,
+          sentSelectedColors: createRoomData.selectedColors
+        });
+        
         // Agregar la nueva partida al inicio de la lista
         this.rooms.unshift(response.data);
         this.isLoading = false;
@@ -290,16 +395,18 @@ export class RoomsPage implements OnInit, OnDestroy {
         // Cerrar el modal
         this.closeModal();
 
-        console.log('✅ Partida creada y estado de espera activado:', {
+        console.log('🎯 Partida creada y estado de espera activado:', {
           isWaitingForPlayer: this.isWaitingForPlayer,
           waitingRoom: this.waitingRoom,
+          roomSelectedColors: response.data.selectedColors,
+          roomColorCount: response.data.colorCount
         });
 
         // Opcionalmente, mostrar un mensaje de éxito
         console.log(response.message);
       },
       error: (error) => {
-        console.error('Error al crear partida:', error);
+        console.error('❌ Error al crear partida:', error);
         this.error =
           error.error?.message ||
           'Error al crear la partida. Intenta nuevamente.';

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Room } from '../../services/room.service';
+import { GameService, Color } from '../../services/game.service';
 
 @Component({
   selector: 'app-room-card',
@@ -14,7 +15,7 @@ export class RoomCardComponent {
   @Input() isJoining: boolean = false;
   @Output() joinRoomEvent = new EventEmitter<Room>();
 
-  constructor() {}
+  constructor(private gameService: GameService) {}
 
   /**
    * Emite el evento para unirse a la sala
@@ -86,5 +87,47 @@ export class RoomCardComponent {
    */
   getOccupancyPercentage(): number {
     return (this.room.currentPlayers / this.room.maxPlayers) * 100;
+  }
+
+  /**
+   * Verifica si la sala tiene colores personalizados
+   */
+  hasCustomColors(): boolean {
+    return Boolean(this.room.selectedColors && this.room.selectedColors.length > 0);
+  }
+
+  /**
+   * Obtiene los objetos Color para visualización
+   */
+  getDisplayColors(): Color[] {
+    if (!this.hasCustomColors()) {
+      return [];
+    }
+    
+    return this.gameService.getColorObjects(this.room.selectedColors!);
+  }
+
+  /**
+   * Obtiene una muestra de colores para mostrar (máximo 6)
+   */
+  getColorSample(): Color[] {
+    const colors = this.getDisplayColors();
+    return colors.slice(0, Math.min(6, colors.length));
+  }
+
+  /**
+   * Verifica si hay más colores de los que se muestran
+   */
+  hasMoreColors(): boolean {
+    const colors = this.getDisplayColors();
+    return colors.length > 6;
+  }
+
+  /**
+   * Obtiene el número de colores adicionales
+   */
+  getAdditionalColorsCount(): number {
+    const colors = this.getDisplayColors();
+    return Math.max(0, colors.length - 6);
   }
 }

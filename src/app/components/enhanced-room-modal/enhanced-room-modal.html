@@ -1,6 +1,4 @@
-<!-- Modal Overlay -->
 <div class="modal-overlay" [class.active]="isVisible" (click)="closeModal()">
-  <!-- Modal Content -->
   <div class="modal-content" (click)="$event.stopPropagation()">
     <!-- Modal Header -->
     <div class="modal-header">
@@ -9,7 +7,7 @@
           <span class="badge-icon">🎮</span>
           Nueva Partida
         </div>
-        <h2>Crear Partida</h2>
+        <h2>Crear Partida Personalizada</h2>
         <p class="modal-subtitle">Configura tu partida de Simon Says</p>
       </div>
       <button class="close-button" (click)="closeModal()">
@@ -42,51 +40,30 @@
           </div>
         </div>
 
-        <!-- Campo Cantidad de Colores - SIN LÍMITE -->
+        <!-- Selector de Colores Personalizados -->
         <div class="form-group">
-          <label class="form-label" for="colorCount">Cantidad de Colores</label>
-          <input
-            type="number"
-            id="colorCount"
-            name="colorCount"
-            class="form-input"
-            placeholder="Cantidad de colores (mínimo 2)"
-            [(ngModel)]="roomData.colorCount"
-            (ngModelChange)="onColorCountChange()"
-            min="2"
-            required
-            #colorCountInput="ngModel"
-          />
+          <label class="form-label">Seleccionar Colores (mínimo 2)</label>
+          <div class="colors-grid">
+            <div
+              *ngFor="let color of availableColors"
+              class="color-option"
+              [class.selected]="isColorSelected(color.name)"
+              (click)="toggleColor(color.name)"
+              [style.background-color]="color.hexColor"
+              [title]="color.displayName"
+            >
+              <div class="color-check" *ngIf="isColorSelected(color.name)">✓</div>
+              <span class="color-name">{{ color.displayName }}</span>
+            </div>
+          </div>
+          <div class="selected-count">
+            Colores seleccionados: {{ getSelectedColors().length }}
+          </div>
           <div
             class="error-message"
-            *ngIf="colorCountInput.touched && roomData.colorCount < 2"
+            *ngIf="getSelectedColors().length < 2"
           >
-            La cantidad mínima de colores es 2
-          </div>
-          <p class="form-hint">
-            🎨 Sin límites! Elige la cantidad que desees (mínimo 2)
-          </p>
-        </div>
-
-        <!-- Selector Simple de Colores por Slots -->
-        <div class="form-group">
-          <label class="form-label">Colores para la Partida</label>
-          <p class="form-hint">
-            🎨 Haz clic en cualquier color para cambiarlo. Cada color debe ser único.
-          </p>
-          
-          <!-- Slots de colores clickeables -->
-          <div class="color-slots-grid">
-            <div 
-              *ngFor="let slot of colorSlots; let i = index; trackBy: trackByColor"
-              class="color-slot"
-              [style.background-color]="slot.hexColor"
-              [title]="'Clic para cambiar el color ' + (i + 1)"
-              (click)="onSlotClick(i)"
-            >
-              <div class="slot-number">{{ i + 1 }}</div>
-              <div class="slot-color-code">{{ slot.hexColor }}</div>
-            </div>
+            Debes seleccionar al menos 2 colores
           </div>
         </div>
 
@@ -106,7 +83,7 @@
           <button type="button" class="btn-secondary" (click)="closeModal()">
             Cancelar
           </button>
-          <button type="submit" class="btn-primary" [disabled]="form.invalid">
+          <button type="submit" class="btn-primary" [disabled]="!isFormValid()">
             Crear Partida
           </button>
         </div>

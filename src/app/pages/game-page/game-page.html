@@ -1,1 +1,115 @@
-<p>game-page works!</p>
+<div class="game-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Cargando juego...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <div class="error-icon">⚠️</div>
+    <h3>Error</h3>
+    <p>{{ error }}</p>
+    <button class="btn-primary" (click)="backToRooms()">Volver a Salas</button>
+  </div>
+
+  <!-- Game Content -->
+  <div *ngIf="!isLoading && !error" class="game-content">
+    <!-- Game Header -->
+    <div class="game-header">
+      <div class="game-info">
+        <h1 class="game-title">{{ roomName }}</h1>
+        <div class="game-details">
+          <span class="detail-item">
+            <strong>Ronda:</strong> {{ gameState?.currentRound || 0 }}
+          </span>
+        </div>
+      </div>
+      
+      <button class="btn-back" (click)="backToRooms()">
+        <span>←</span> Salir
+      </button>
+    </div>
+
+    <!-- Game Status -->
+    <div class="game-status" [class]="gameState?.status">
+      <div class="status-icon">
+        <span *ngIf="gameState?.status === 'waiting'">⏳</span>
+        <span *ngIf="gameState?.status === 'playing' && showingSequence">👀</span>
+        <span *ngIf="gameState?.status === 'playing' && !showingSequence && isPlayerTurn">🎯</span>
+        <span *ngIf="gameState?.status === 'playing' && !showingSequence && !isPlayerTurn">⏱️</span>
+        <span *ngIf="gameState?.status === 'finished'">🏁</span>
+      </div>
+      <h2 class="status-text">{{ getGameStatusText() }}</h2>
+    </div>
+
+    <!-- Last Color Added Indicator -->
+    <div *ngIf="gameStarted && currentSequence.length > 0" class="last-color-indicator">
+      <div class="indicator-label">Último color agregado:</div>
+      <div class="last-color-display" [ngStyle]="getLastColorStyle()">
+        <div class="pulse-effect"></div>
+      </div>
+      <div style="color: white; font-size: 10px; margin-top: 5px;">
+        Debug: gameStarted={{gameStarted}} | sequence={{currentSequence.length}} | isPlayerTurn={{isPlayerTurn}}
+      </div>
+    </div>
+
+    <!-- Scores -->
+    <div *ngIf="gameStarted" class="scores-container">
+      <div class="score-card">
+        <div class="score-label">Jugador 1</div>
+        <div class="score-value">{{ gameState?.player1Score || 0 }}</div>
+      </div>
+      <div class="vs-divider">VS</div>
+      <div class="score-card">
+        <div class="score-label">Jugador 2</div>
+        <div class="score-value">{{ gameState?.player2Score || 0 }}</div>
+      </div>
+    </div>
+
+
+    <!-- Color Grid -->
+    <div *ngIf="availableColors.length > 0" class="color-grid" [attr.data-color-count]="availableColors.length">
+      <div 
+        *ngFor="let color of availableColors; trackBy: trackByColorName" 
+        class="color-button"
+        [id]="'color-' + color.name"
+        [ngStyle]="getColorStyle(color)"
+        [class.disabled]="!isPlayerTurn || showingSequence"
+        (click)="onColorClick(color)"
+      >
+        <div class="color-content">
+          <!-- Nombres de colores removidos según solicitud -->
+        </div>
+        <div class="color-overlay"></div>
+      </div>
+    </div>
+
+
+    <!-- Player Progress -->
+    <div *ngIf="waitingForPlayer && playerSequence.length > 0" class="progress-container">
+      <h3>Tu Progreso</h3>
+      <div class="progress-bar">
+        <div 
+          class="progress-fill" 
+          [style.width.%]="(playerSequence.length / currentSequence.length) * 100"
+        ></div>
+      </div>
+      <p class="progress-text">
+        {{ playerSequence.length }} / {{ currentSequence.length }}
+      </p>
+    </div>
+
+    <!-- Game Instructions -->
+    <div *ngIf="!gameStarted" class="instructions">
+      <h3>🎮 Cómo Jugar</h3>
+      <ul>
+        <li>Observa la secuencia de colores que se muestra</li>
+        <li>Repite la secuencia haciendo clic en los colores en el mismo orden</li>
+        <li>Cada ronda añade un color más a la secuencia</li>
+        <li>Si te equivocas, pierdes y el otro jugador gana</li>
+        <li>¡Gana puntos completando secuencias!</li>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -8,18 +8,20 @@ export interface Room {
   name: string;
   host: string;
   colorCount: number;
+  selectedColors?: string[];
   currentPlayers: number;
   maxPlayers: number;
   isActive: boolean;
   createdAt: string;
   player1Id: number;
   player2Id: number | null;
-  status: 'waiting' | 'playing' | 'finished';
+  status: 'waiting' | 'playing' | 'finished' | 'in_progress' | 'active';
 }
 
 export interface CreateRoomData {
   name: string;
   colorCount: number;
+  selectedColors?: string[];
 }
 
 export interface RoomResponse {
@@ -53,7 +55,7 @@ export class RoomService {
    */
   getAvailableRooms(): Observable<RoomResponse> {
     const headers = this.getHeaders();
-    return this.http.get<RoomResponse>(`${this.apiUrl}/partidas/disponibilad`, {
+    return this.http.get<RoomResponse>(`${this.apiUrl}/api/partidas/disponibles`, {
       headers,
     });
   }
@@ -64,7 +66,7 @@ export class RoomService {
   createRoom(roomData: CreateRoomData): Observable<CreateRoomResponse> {
     const headers = this.getHeaders();
     return this.http.post<CreateRoomResponse>(
-      `${this.apiUrl}/createRoom`,
+      `${this.apiUrl}/api/createRoom`,
       roomData,
       { headers }
     );
@@ -76,10 +78,20 @@ export class RoomService {
   joinGame(roomId: string): Observable<JoinRoomResponse> {
     const headers = this.getHeaders();
     return this.http.post<JoinRoomResponse>(
-      `${this.apiUrl}/partidas/join/${roomId}`,
+      `${this.apiUrl}/api/partidas/join/${roomId}`,
       {},
       { headers }
     );
+  }
+
+  /**
+   * Obtiene los detalles de una sala específica
+   */
+  getRoomDetails(roomId: string): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.get(`${this.apiUrl}/api/rooms/${roomId}/details`, {
+      headers,
+    });
   }
 
   /**
