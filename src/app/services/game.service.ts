@@ -44,7 +44,7 @@ export interface Color {
   providedIn: 'root',
 })
 export class GameService {
-  private apiUrl = 'https://a4d266695ce9b5c962c65a1b23fcc8e6.serveo.net/api';
+  private apiUrl = 'https://ninety-pants-boil.loca.lt/api';
   private gameStateSubject = new BehaviorSubject<GameState | null>(null);
   public gameState$ = this.gameStateSubject.asObservable();
 

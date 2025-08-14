@@ -43,7 +43,7 @@ export interface JoinRoomResponse {
   providedIn: 'root',
 })
 export class RoomService {
-  private apiUrl = 'https://a4d266695ce9b5c962c65a1b23fcc8e6.serveo.net';
+  private apiUrl = 'https://ninety-pants-boil.loca.lt';
 
   constructor(
     private http: HttpClient,

@@ -49,8 +49,7 @@ export interface UserLoginData {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl =
-    'https://a4d266695ce9b5c962c65a1b23fcc8e6.serveo.net/api/auth';
+  private apiUrl = 'https://ninety-pants-boil.loca.lt/api/auth';
 
   constructor(
     private http: HttpClient,
